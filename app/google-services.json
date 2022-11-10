@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "92181968974",
+    "firebase_url": "https://ru-dimsos-myapplication-brain-default-rtdb.firebaseio.com",
+    "project_id": "ru-dimsos-myapplication-brain",
+    "storage_bucket": "ru-dimsos-myapplication-brain.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:92181968974:android:a535a0d949d3e4712f2b1f",
+        "android_client_info": {
+          "package_name": "ru.dimsos.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "92181968974-d9cqigebnl7o9so5kvmvud0r737sl1d3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRMIIQowi9ux7WmegI49li12tbs9cSp-0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "92181968974-d9cqigebnl7o9so5kvmvud0r737sl1d3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

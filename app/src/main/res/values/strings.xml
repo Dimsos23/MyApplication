@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="name">Name</string>
+    <string name="mail">Mail</string>
+    <string name="end_game">New game or exit?</string>
+    <string name="new_game">New game</string>
+    <string name="exit">Exit</string>
+    <string name="play">Play</string>
+    <string name="rules">Rules</string>
+    <string name="mind_level">Mind level:</string>
+    <string name="description_brain">Image brain</string>
+    <string name="account">Enter your account</string>
+    <string name="zero">0</string>
+    <string name="account_menu">Account</string>
+    <string name="sound_menu">Sound</string>
+    <string name="style_menu">Style</string>
+    <string name="level_menu">Level</string>
+    <string name="exit_menu">Exit game</string>
+    <string name="password">Password</string>
+    <string name="enter">Enter</string>
+    <string name="register">Register</string>
+    <string name="music">Music</string>
+    <string name="background_music">Background Music</string>
+    <string name="click">Click</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="easy">Easy</string>
+    <string name="medium">Medium</string>
+    <string name="hard">Hard</string>
+    <string name="choose_level">Choose the level of difficulty</string>
+    <string name="question">-?-</string>
+    <string name="main_menu">Menu</string>
+    <string name="space">" "</string>
+    <integer name="number">10</integer>
+
+
+</resources>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
+
+    <item
+        android:id="@+id/account_menu"
+        android:title="@string/account_menu"
+        app:showAsAction="always"
+
+        />
+    <item
+        android:title="@string/sound_menu"
+        android:id="@+id/sound_menu"
+        app:showAsAction="always"
+
+        />
+    <item
+        android:title="@string/style_menu"
+        android:id="@+id/style_menu"
+        app:showAsAction="always"
+
+        />
+    <item
+        android:title="@string/level_menu"
+        android:id="@+id/level_menu"
+        app:showAsAction="always"
+
+        />
+    <item
+        android:title="@string/exit_menu"
+        android:id="@+id/exit_menu"
+        app:showAsAction="always"
+        />
+</menu>

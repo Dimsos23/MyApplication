@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_bottom_menu"
+    app:startDestination="@id/account_menu">
+
+    <fragment
+        android:id="@+id/account_menu"
+        android:label="@string/account_menu"
+        android:name="ru.dimsos.myapplication.Fragment_account"
+        tools:layout="@layout/fragment_account" />
+
+    <fragment
+        android:label="@string/sound_menu"
+        android:name="ru.dimsos.myapplication.Fragment_account"
+        android:id="@+id/sound_menu"
+        tools:layout="@layout/fragment_account"/>
+
+    <fragment
+        android:label="@string/style_menu"
+        android:name="ru.dimsos.myapplication.Fragment_account"
+        android:id="@+id/style_menu"
+        tools:layout="@layout/fragment_account"/>
+
+    <fragment
+        android:label="@string/level_menu"
+        android:name="ru.dimsos.myapplication.Fragment_account"
+        android:id="@+id/level_menu"
+        tools:layout="@layout/fragment_account"/>
+
+    <fragment
+        android:label="@string/exit_menu"
+        android:name="ru.dimsos.myapplication.Fragment_account"
+        android:id="@+id/exit_menu"
+        tools:layout="@layout/fragment_account"
+        />
+
+</navigation>

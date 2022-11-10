@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutMusic"
+    android:layout_width="345dp"
+    android:layout_height="230dp"
+    android:background="@drawable/round_my_fragment"
+    app:layout_constraintDimensionRatio="30">
+
+    <Button
+        android:id="@+id/btnClick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="@string/click"
+        android:textColor="@color/design_default_color_surface"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.127"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnMusic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/music"
+        android:textColor="@color/design_default_color_surface"
+        app:layout_constraintBottom_toTopOf="@+id/btnClick"
+        app:layout_constraintEnd_toEndOf="@+id/btnClick"
+        app:layout_constraintStart_toStartOf="@+id/btnClick" />
+
+    <Button
+        android:id="@+id/btnBackGroundMusic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="@string/background_music"
+        android:textAllCaps="false"
+        android:textColor="@color/design_default_color_surface"
+        app:layout_constraintBottom_toTopOf="@+id/btnMusic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/tvMusic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:text="@string/on"
+        android:textAllCaps="true"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/btnMusic"
+        app:layout_constraintStart_toEndOf="@+id/btnMusic"
+        app:layout_constraintTop_toTopOf="@+id/btnMusic" />
+
+    <TextView
+        android:id="@+id/tvClick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:text="@string/on"
+        android:textAllCaps="true"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/btnClick"
+        app:layout_constraintStart_toEndOf="@+id/btnClick"
+        app:layout_constraintTop_toTopOf="@+id/btnClick" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="51dp"
+        android:layout_height="55dp"
+        app:layout_constraintBottom_toBottomOf="@+id/btnBackGroundMusic"
+        app:layout_constraintEnd_toStartOf="@+id/btnBackGroundMusic"
+        app:layout_constraintTop_toTopOf="@+id/btnBackGroundMusic"
+        app:srcCompat="@drawable/ic_right_24" />
+
+    <ImageButton
+        android:id="@+id/imCloseWindowSound"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="180dp"
+        android:backgroundTint="@color/frag_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_close_window"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
