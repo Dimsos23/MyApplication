@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button btnPlay,btnRules;
     static TextView tvCurrentAccount;
     static TextView tvLevelMind;
+    static String level;
 
     String strLevelMind = TwoActivity.levelMind.toString();
     public  static TextView tvUsers;

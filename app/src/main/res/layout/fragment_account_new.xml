@@ -20,11 +20,12 @@
         android:hint="@string/name"
         app:counterEnabled="true"
         app:counterMaxLength="15"
-        app:endIconMode="clear_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:startIconDrawable="@drawable/ic_person">
+        app:startIconDrawable="@drawable/ic_person"
+        app:endIconMode="clear_text"
+        >
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edTextName"
