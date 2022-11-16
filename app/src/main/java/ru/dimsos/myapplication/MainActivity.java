@@ -15,16 +15,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static DbManager dbManager;
 
     Fragment_account fragment_account;
-    Fragment_account fragment_account_new;
     Fragment_sound fragment_sound;
     Fragment_level fragment_level;
     Fragment_style fragment_style;
@@ -35,7 +31,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button btnPlay,btnRules;
     static TextView tvCurrentAccount;
     static TextView tvLevelMind;
-    static String level;
 
     String strLevelMind = TwoActivity.levelMind.toString();
     public  static TextView tvUsers;
