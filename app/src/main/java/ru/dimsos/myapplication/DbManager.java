@@ -37,18 +37,32 @@ public class DbManager {
     public void readDatabase() {
 
         Cursor cursor = db.query(Constant.TABLE_NAME, null, null, null, null, null, null);
-        while (cursor.moveToNext()) {
-            @SuppressLint("Range") String nameUser = cursor.getString(cursor.getColumnIndex(Constant.USER_NAME));
-            @SuppressLint("Range") String levelUser = cursor.getString(cursor.getColumnIndex(Constant.USER_LEVEL));
-            Fragment_account.listUser.put(nameUser, levelUser);
+        if (cursor.moveToFirst()) {
+            while (cursor.moveToNext()) {
+                @SuppressLint("Range") String nameUser = cursor.getString(cursor.getColumnIndex(Constant.USER_NAME));
+                @SuppressLint("Range") String levelUser = cursor.getString(cursor.getColumnIndex(Constant.USER_LEVEL));
+                MainActivity.listUser.put(nameUser, levelUser);
+            }
+        } else {
+            cursor.close();
         }
-        cursor.close();
-
     }
 
     public Boolean chekPassword(String password) {
         Cursor cursor = db.rawQuery("Select * from users where user_password = ?", new String[]{password});
 //          c.close();
         return cursor.getCount() > 0;
+    }
+
+    public void updateLevel() {
+        String name = MainActivity.tvCurrentAccount.getText().toString();
+        String level = TwoActivity.levelMind.toString();
+        ContentValues cv = new ContentValues();
+        cv.put(Constant.USER_LEVEL, level);
+        db.update(Constant.TABLE_NAME, cv, "user_name = ?", new String[]{name});
+    }
+
+    public void deleteDatabase() {
+        db.delete(Constant.TABLE_NAME, null, null);
     }
 }

@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:background="@color/frag_color"
             android:maxLines="1"
-            android:inputType="text"
+            android:inputType="textPersonName|textCapWords"
             android:imeOptions="actionNext"/>
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -84,27 +84,5 @@
         app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintStart_toStartOf="@+id/textInputLayout2"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />
-
-    <Button
-        android:id="@+id/btnRead"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:text="Read"
-        app:layout_constraintBottom_toBottomOf="@+id/btnEnter"
-        app:layout_constraintEnd_toStartOf="@+id/btnEnter"
-        app:layout_constraintTop_toTopOf="@+id/btnEnter"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <Button
-        android:id="@+id/btnClear"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="Clear"
-        app:layout_constraintBottom_toBottomOf="@+id/btnEnter"
-        app:layout_constraintStart_toEndOf="@+id/btnEnter"
-        app:layout_constraintTop_toTopOf="@+id/btnEnter"
-        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

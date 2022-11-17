@@ -1,6 +1,8 @@
 package ru.dimsos.myapplication;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -17,6 +19,9 @@ import java.util.ArrayList;
 
 public class TwoActivity extends AppCompatActivity implements View.OnClickListener {
 
+    SharedPreferences sPrefTwo;
+    final static String SAVED_LEVEL = "saved_level";
+
     CountDownTimer timer;
     Dialog_fragment dialog_fragment;
 
@@ -30,11 +35,10 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
     int min = 1;
     static int max = 10;
     Integer number = 10;
-    long countDownPeriod = 13000;
+    long countDownPeriod = 7000;
     Button[] btn;
     boolean[] btnCheck = new boolean[]{false, false, false, false, false, false, false, false, false};
     int checkIndex = 0;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +80,16 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
         startGame();
     }
 
+    void saveText() {
+        sPrefTwo = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor ed = sPrefTwo.edit();
+        ed.putString(SAVED_LEVEL, levelMind.toString());
+        ed.apply();
+    }
+
     @Override
     protected void onDestroy() {
+        MainActivity.dbManager.updateLevel();
         super.onDestroy();
     }
 

@@ -16,6 +16,8 @@
     <string name="style_menu">Style</string>
     <string name="level_menu">Level</string>
     <string name="exit_menu">Exit game</string>
+    <string name="digits">абвгдеёжзийклмнопрстуфхцчшщыьэюяАБВГДЕЁЖЗИКЛМНОПРСТУФХЦЧШЩЫЬЭЮЯ
+        abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789</string>
     <string name="password">Password</string>
     <string name="enter">Enter</string>
     <string name="register">Register</string>

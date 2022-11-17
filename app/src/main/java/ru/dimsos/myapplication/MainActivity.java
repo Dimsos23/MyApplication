@@ -2,7 +2,9 @@ package ru.dimsos.myapplication;
 
 
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,10 +17,20 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    SharedPreferences sPref;
+
+    final static String SAVED_NAME = "saved_name";
+    final static String SAVED_LEVEL = "saved_level";
+
     public static DbManager dbManager;
+
+    public static Map<String, String> listUser = new HashMap<>();
 
     Fragment_account fragment_account;
     Fragment_sound fragment_sound;
@@ -33,9 +45,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     static TextView tvLevelMind;
 
     String strLevelMind = TwoActivity.levelMind.toString();
-    public  static TextView tvUsers;
+    int intLevelMindTwo = TwoActivity.levelMind;
 
-    public static Integer saveLevelMain;
+    public  static TextView tvUsers;
 
 
     @Override
@@ -43,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
 
         dbManager = new DbManager(this);
 
@@ -60,22 +73,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnRules.setOnClickListener(this);
 
         tvLevelMind = findViewById(R.id.tvMindLevel);
-        tvLevelMind.setText(strLevelMind);
 
         tvUsers = findViewById(R.id.tvUsers);
 
         tvCurrentAccount = findViewById(R.id.tvCurrentAccount);
         tvCurrentAccount.setOnClickListener(this);
 
-        saveLevelMain = Integer.parseInt(tvLevelMind.getText().toString());
+        // Подключаемся к базе данных и заполняем listUser данными от тудаю
+        dbManager.openDatabase();
+        dbManager.readDatabase();
 
+        // Если база данных пуста, то мы не загружаем данные с SharedPreferences
+        if (!listUser.isEmpty()) loadText();
 
+        int currentLevelAccount = Integer.parseInt(tvLevelMind.getText().toString());
+
+        // Сохраняем в SharedPreference уровень только если он стал больше, чем был.
+        if (currentLevelAccount < intLevelMindTwo) saveText();
+        if (!listUser.isEmpty()) loadText();
     }
 
+    void saveText() {
+        sPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor ed = sPref.edit();
+        ed.putString(SAVED_LEVEL, strLevelMind);
+        ed.apply();
+    }
+
+    void loadText() {
+        sPref = getPreferences(Context.MODE_PRIVATE);
+        String savedName = sPref.getString(SAVED_NAME, "");
+        String savedLevel = sPref.getString(SAVED_LEVEL, "");
+        tvCurrentAccount.setText(savedName);
+        tvLevelMind.setText(savedLevel);
+    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        dbManager.updateLevel();
         dbManager.closeDatabase();
     }
 
