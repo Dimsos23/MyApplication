@@ -17,14 +17,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-
 import androidx.annotation.Nullable;
-
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class Fragment_account extends Fragment implements View.OnClickListener {
@@ -38,8 +33,6 @@ public class Fragment_account extends Fragment implements View.OnClickListener {
     ImageButton imCloseWindow;
     FragmentTransaction fragmentTransaction;
     static TextInputLayout tilName;
-
-//    public static Map<String, String> listUser = new HashMap<>();
 
     @Nullable
     @Override
@@ -64,8 +57,6 @@ public class Fragment_account extends Fragment implements View.OnClickListener {
         EditText[] edList = {edTextName, edTextPassword};
         CustomTextWatcher textWatcher = new CustomTextWatcher(edList, btnEnter);
         for (EditText editText : edList) editText.addTextChangedListener(textWatcher);
-
-//        MainActivity.dbManager.readDatabase();
 
         return view;
     }
@@ -164,8 +155,6 @@ public class Fragment_account extends Fragment implements View.OnClickListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        saveText();
-//        MainActivity.dbManager.updateLevel();
     }
 
     public void closeFragWindow() {
