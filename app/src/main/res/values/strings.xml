@@ -2,7 +2,7 @@
     <string name="app_name">My Application</string>
     <string name="name">Name</string>
     <string name="mail">Mail</string>
-    <string name="end_game">New game or exit?</string>
+    <string name="end_game">GAME OVER</string>
     <string name="new_game">New game</string>
     <string name="exit">Exit</string>
     <string name="play">Play</string>

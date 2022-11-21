@@ -99,15 +99,4 @@
 
     </FrameLayout>
 
-    <TextView
-        android:id="@+id/tvUsers"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="20dp"
-        android:gravity="center|top"
-        android:text="TextView"
-        app:layout_constraintEnd_toEndOf="@+id/btnRules"
-        app:layout_constraintStart_toStartOf="@+id/btnRules"
-        app:layout_constraintTop_toBottomOf="@+id/btnRules" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

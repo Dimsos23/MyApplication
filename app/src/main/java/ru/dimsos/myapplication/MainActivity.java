@@ -16,7 +16,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,9 +23,6 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     SharedPreferences sPref;
-
-    final static String SAVED_NAME = "saved_name";
-    final static String SAVED_LEVEL = "saved_level";
 
     public static DbManager dbManager;
 
@@ -47,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     String strLevelMind = TwoActivity.levelMind.toString();
     int intLevelMindTwo = TwoActivity.levelMind;
 
-    public  static TextView tvUsers;
+    static String savedRadioButton;
 
 
     @Override
@@ -74,8 +70,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         tvLevelMind = findViewById(R.id.tvMindLevel);
 
-        tvUsers = findViewById(R.id.tvUsers);
-
         tvCurrentAccount = findViewById(R.id.tvCurrentAccount);
         tvCurrentAccount.setOnClickListener(this);
 
@@ -91,19 +85,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Сохраняем в SharedPreference уровень только если он стал больше, чем был.
         if (currentLevelAccount < intLevelMindTwo) saveText();
         if (!listUser.isEmpty()) loadText();
+
     }
 
     void saveText() {
         sPref = getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor ed = sPref.edit();
-        ed.putString(SAVED_LEVEL, strLevelMind);
+        ed.putString(Constant.SAVED_LEVEL, strLevelMind);
         ed.apply();
     }
 
     void loadText() {
         sPref = getPreferences(Context.MODE_PRIVATE);
-        String savedName = sPref.getString(SAVED_NAME, "");
-        String savedLevel = sPref.getString(SAVED_LEVEL, "");
+        String savedName = sPref.getString(Constant.SAVED_NAME, "");
+        String savedLevel = sPref.getString(Constant.SAVED_LEVEL, "");
+        savedRadioButton = sPref.getString(Constant.SAVED_RADIO,"");
         tvCurrentAccount.setText(savedName);
         tvLevelMind.setText(savedLevel);
     }
@@ -164,6 +160,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
 
         if (v.getId() == R.id.btnPlay) {
+            // Загружаем данные если в случае, когда MainActivity не перезапускается.
+            loadText();
             TwoActivity.levelMind = 0;
             Intent intent = new Intent(this, TwoActivity.class);
             startActivity(intent);

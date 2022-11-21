@@ -199,6 +199,7 @@ public class Fragment_account extends Fragment implements View.OnClickListener {
                     }
                 }
                 if (btnEnter.getText().equals("Register")) {
+                    level = "0";
                     MainActivity.dbManager.insertDatabase(name, password, level);
                     MainActivity.dbManager.readDatabase();
                     String userLevel = MainActivity.listUser.get(name);

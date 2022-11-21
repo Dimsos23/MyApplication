@@ -1,8 +1,6 @@
 package ru.dimsos.myapplication;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -11,6 +9,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
@@ -18,9 +17,6 @@ import java.util.ArrayList;
 
 
 public class TwoActivity extends AppCompatActivity implements View.OnClickListener {
-
-    SharedPreferences sPrefTwo;
-    final static String SAVED_LEVEL = "saved_level";
 
     CountDownTimer timer;
     Dialog_fragment dialog_fragment;
@@ -35,9 +31,11 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
     int min = 1;
     static int max = 10;
     Integer number = 10;
-    long countDownPeriod = 7000;
+    static long countDownPeriod = 11000;
+    static long addCountDownPeriod = 4000;
     Button[] btn;
     boolean[] btnCheck = new boolean[]{false, false, false, false, false, false, false, false, false};
+    Button[] listButton;
     int checkIndex = 0;
 
     @Override
@@ -48,6 +46,7 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         dialog_fragment = new Dialog_fragment();
+
 
         onSound = MediaPlayer.create(this, R.raw.sound_on);
         offSound = MediaPlayer.create(this, R.raw.sound_off);
@@ -61,6 +60,8 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
         btn7 = findViewById(R.id.button7);
         btn8 = findViewById(R.id.button8);
         btn9 = findViewById(R.id.button9);
+
+        listButton = new Button[] {btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9};
 
         tvTimer = findViewById(R.id.tvTimer);
         tvResult = findViewById(R.id.tvResult);
@@ -77,26 +78,34 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
 
         btn = new Button[]{btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9};
 
-        startGame();
-    }
+        checkStateFragmentLevel();
 
-    void saveText() {
-        sPrefTwo = getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor ed = sPrefTwo.edit();
-        ed.putString(SAVED_LEVEL, levelMind.toString());
-        ed.apply();
+        startGame();
     }
 
     @Override
     protected void onDestroy() {
         MainActivity.dbManager.updateLevel();
         super.onDestroy();
+        timer.cancel();
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
+        timer.cancel();
         recreate();
+    }
+
+    // Метод для уровня игры hard.
+    public void checkCurrentNumber(int index) {
+        if (MainActivity.savedRadioButton.equals("hard")) {
+            if (currentInt > number) {
+                listButton[index].setBackgroundColor(getResources().getColor(R.color.pink));
+                timer.cancel();
+                dialog_fragment.show(getFragmentManager(), "dialog");
+            }
+        }
     }
 
     public void startGame() {
@@ -155,7 +164,7 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
             for (int j = 1; j < checkList.size(); j++) {
                 sum += checkList.get(j);
                 if (sum == Integer.parseInt(tvResult.getText().toString())) {
-                    return  checkList;
+                    return checkList;
                 }
             }
         }
@@ -173,13 +182,27 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
             public void onFinish() {
                 dialog_fragment.setCancelable(false); // позволяет диалогу не реагировать на лишние нажатия
                 dialog_fragment.show(getFragmentManager(), "dialog");
-//                showDialog(DIALOG_END_GAME);
             }
         }.start();
     }
 
     public void SoundPlay(MediaPlayer sound) {
         sound.start();
+    }
+
+    public void checkStateFragmentLevel() {
+        if (MainActivity.savedRadioButton.equals("easy")) {
+            countDownPeriod = 11000;
+            addCountDownPeriod = 4000;
+        }
+        if (MainActivity.savedRadioButton.equals("medium")) {
+            countDownPeriod = 8000;
+            addCountDownPeriod = 3000;
+        }
+        if (MainActivity.savedRadioButton.equals("hard")) {
+            countDownPeriod = 7000;
+            addCountDownPeriod = 3000;
+        }
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -189,8 +212,9 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
             case R.id.button1:
                 if (!btnCheck[0]) {
                     SoundPlay(onSound);
-                    btn1.setBackgroundColor(getResources().getColor(R.color.pressed));
                     currentInt = currentInt + Integer.parseInt(btn1.getText().toString());
+                    btn1.setBackgroundColor(getResources().getColor(R.color.pressed));
+                    checkCurrentNumber(0);
                     btnCheck[0] = true;
                 } else {
                     SoundPlay(offSound);
@@ -202,8 +226,9 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
             case R.id.button2:
                 if (!btnCheck[1]) {
                     SoundPlay(onSound);
-                    btn2.setBackgroundColor(getResources().getColor(R.color.pressed));
                     currentInt = currentInt + Integer.parseInt(btn2.getText().toString());
+                    btn2.setBackgroundColor(getResources().getColor(R.color.pressed));
+                    checkCurrentNumber(1);
                     btnCheck[1] = true;
                 } else {
                     SoundPlay(offSound);
@@ -215,8 +240,9 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
             case R.id.button3:
                 if (!btnCheck[2]) {
                     SoundPlay(onSound);
-                    btn3.setBackgroundColor(getResources().getColor(R.color.pressed));
                     currentInt = currentInt + Integer.parseInt(btn3.getText().toString());
+                    btn3.setBackgroundColor(getResources().getColor(R.color.pressed));
+                    checkCurrentNumber(2);
                     btnCheck[2] = true;
                 } else {
                     SoundPlay(offSound);
@@ -228,8 +254,9 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
             case R.id.button4:
                 if (!btnCheck[3]) {
                     SoundPlay(onSound);
-                    btn4.setBackgroundColor(getResources().getColor(R.color.pressed));
                     currentInt = currentInt + Integer.parseInt(btn4.getText().toString());
+                    btn4.setBackgroundColor(getResources().getColor(R.color.pressed));
+                    checkCurrentNumber(3);
                     btnCheck[3] = true;
                 } else {
                     SoundPlay(offSound);
@@ -241,8 +268,9 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
             case R.id.button5:
                 if (!btnCheck[4]) {
                     SoundPlay(onSound);
-                    btn5.setBackgroundColor(getResources().getColor(R.color.pressed));
                     currentInt = currentInt + Integer.parseInt(btn5.getText().toString());
+                    btn5.setBackgroundColor(getResources().getColor(R.color.pressed));
+                    checkCurrentNumber(4);
                     btnCheck[4] = true;
                 } else {
                     SoundPlay(offSound);
@@ -254,8 +282,9 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
             case R.id.button6:
                 if (!btnCheck[5]) {
                     SoundPlay(onSound);
-                    btn6.setBackgroundColor(getResources().getColor(R.color.pressed));
                     currentInt = currentInt + Integer.parseInt(btn6.getText().toString());
+                    btn6.setBackgroundColor(getResources().getColor(R.color.pressed));
+                    checkCurrentNumber(5);
                     btnCheck[5] = true;
                 } else {
                     SoundPlay(offSound);
@@ -267,8 +296,9 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
             case R.id.button7:
                 if (!btnCheck[6]) {
                     SoundPlay(onSound);
-                    btn7.setBackgroundColor(getResources().getColor(R.color.pressed));
                     currentInt = currentInt + Integer.parseInt(btn7.getText().toString());
+                    btn7.setBackgroundColor(getResources().getColor(R.color.pressed));
+                    checkCurrentNumber(6);
                     btnCheck[6] = true;
                 } else {
                     SoundPlay(offSound);
@@ -280,8 +310,9 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
             case R.id.button8:
                 if (!btnCheck[7]) {
                     SoundPlay(onSound);
-                    btn8.setBackgroundColor(getResources().getColor(R.color.pressed));
                     currentInt = currentInt + Integer.parseInt(btn8.getText().toString());
+                    btn8.setBackgroundColor(getResources().getColor(R.color.pressed));
+                    checkCurrentNumber(7);
                     btnCheck[7] = true;
                 } else {
                     SoundPlay(offSound);
@@ -293,8 +324,9 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
             case R.id.button9:
                 if (!btnCheck[8]) {
                     SoundPlay(onSound);
-                    btn9.setBackgroundColor(getResources().getColor(R.color.pressed));
                     currentInt = currentInt + Integer.parseInt(btn9.getText().toString());
+                    btn9.setBackgroundColor(getResources().getColor(R.color.pressed));
+                    checkCurrentNumber(8);
                     btnCheck[8] = true;
                 } else {
                     SoundPlay(offSound);
@@ -305,6 +337,7 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
             default:
                 break;
         }
+
         if (currentInt == number) {
 
             Animation animResult = AnimationUtils.loadAnimation(this, R.anim.my_rotate_scale);
@@ -315,7 +348,7 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
 
             String strNewTimer = tvTimer.getText().toString().replace(" ", "");
             int intIntentNewTimer = Integer.parseInt(strNewTimer);
-            countDownPeriod = (intIntentNewTimer * 1000L) + 4000;
+            countDownPeriod = (intIntentNewTimer * 1000L) + addCountDownPeriod;
             timer.cancel();
 
             startGame();

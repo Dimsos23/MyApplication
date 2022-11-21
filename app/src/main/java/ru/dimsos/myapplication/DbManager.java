@@ -25,13 +25,12 @@ public class DbManager {
         dbHelper.close();
     }
 
-    public Boolean insertDatabase(String userName, String password, String level) {
+    public void insertDatabase(String userName, String password, String level) {
         ContentValues cv = new ContentValues();
         cv.put(Constant.USER_NAME, userName);
         cv.put(Constant.USER_PASSWORD, password);
         cv.put(Constant.USER_LEVEL, level);
-        long result = db.insert(Constant.TABLE_NAME, null, cv);
-        return result != -1;
+        db.insert(Constant.TABLE_NAME, null, cv);
     }
 
     public void readDatabase() {
@@ -49,9 +48,15 @@ public class DbManager {
     }
 
     public Boolean chekPassword(String password) {
-        Cursor cursor = db.rawQuery("Select * from users where user_password = ?", new String[]{password});
-//          c.close();
-        return cursor.getCount() > 0;
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery("Select * from users where user_password = ?", new String[]{password});
+            return cursor.getCount() > 0;
+        } finally {
+            assert cursor != null;
+            cursor.close();
+        }
+
     }
 
     public void updateLevel() {
@@ -60,9 +65,5 @@ public class DbManager {
         ContentValues cv = new ContentValues();
         cv.put(Constant.USER_LEVEL, level);
         db.update(Constant.TABLE_NAME, cv, "user_name = ?", new String[]{name});
-    }
-
-    public void deleteDatabase() {
-        db.delete(Constant.TABLE_NAME, null, null);
     }
 }
