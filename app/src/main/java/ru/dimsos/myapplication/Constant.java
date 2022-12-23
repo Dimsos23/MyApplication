@@ -4,6 +4,7 @@ public class Constant {
 
     final static String SAVED_NAME = "saved_name";
     final static String SAVED_LEVEL = "saved_level";
+    final static String SAVED_TRACK = "saved_track";
     final static String SAVED_RADIO = "saved_radioButton";
 
     public static final String TABLE_NAME = "users";

@@ -181,6 +181,7 @@ public class Fragment_account extends Fragment implements View.OnClickListener {
         switch (v.getId()) {
 
             case R.id.imCloseWindow:
+                MainActivity.playSoundPoolSnap(MainActivity.soundIdSnap);
                 closeFragWindow();
                 break;
             case R.id.btnEnter:
@@ -192,6 +193,7 @@ public class Fragment_account extends Fragment implements View.OnClickListener {
                         MainActivity.tvCurrentAccount.setText(name);
                         MainActivity.tvLevelMind.setText(level);
                         saveText();
+                        MainActivity.playSoundPoolSnap(MainActivity.soundIdSnap);
                         closeFragWindow();
                     } else {
                         snackbar.setText("Не верный пароль или имя пользователя!");
@@ -208,6 +210,7 @@ public class Fragment_account extends Fragment implements View.OnClickListener {
                     saveText();
                     snackbar.setText("Регистрация прошла успешно");
                     snackbar.show();
+                    MainActivity.playSoundPoolSnap(MainActivity.soundIdSnap);
                     closeFragWindow();
                 }
                 break;

@@ -13,9 +13,11 @@
     <color name="frag_color">#C6D1A6</color>
     <color name="btn_play">#FFEB3B</color>
     <color name="btn_stroke_color">#F6DE07</color>
-    <color name="btn_rules_gray">#706F67</color>
+    <color name="btn_rules_gray">#818078</color>
     <color name="letters_gray">#616161</color>
     <color name="pink">#F44336</color>
-    <color name="my_color">#F1E7E7</color>
+    <color name="soundtrack">#D776E9C9</color>
     <color name="action_bar">#292827</color>
+    <color name="main_activity">#F1E7E7</color>
+    <color name="my_color">#F1E7E7</color>
 </resources>

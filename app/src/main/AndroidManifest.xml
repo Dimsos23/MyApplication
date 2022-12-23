@@ -11,20 +11,27 @@
         android:label="MyApplication"
         android:roundIcon="@drawable/brain"
         android:supportsRtl="true"
-        android:theme="@style/AppThemeActionBarIcon"
+        android:theme="@style/ActionBarIcon"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".StartActivity"
             android:exported="true"
-            android:label="BrainWarm"
-            >
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".TwoActivity" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".TwoActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"/>
 
         <meta-data
             android:name="preloaded_fonts"

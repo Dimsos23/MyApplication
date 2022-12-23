@@ -58,6 +58,9 @@ public class DbManager {
         }
 
     }
+//    public void deleteDB() {
+//        db.delete("TABLE_NAME", null, null);
+//    }
 
     public void updateLevel() {
         String name = MainActivity.tvCurrentAccount.getText().toString();

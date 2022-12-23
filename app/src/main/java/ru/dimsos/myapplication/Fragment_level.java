@@ -49,16 +49,19 @@ public class Fragment_level extends Fragment implements View.OnClickListener {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
                     case R.id.radioButtonEasy:
+                        MainActivity.playSoundPoolSnap(MainActivity.soundIdSnap);
                         TwoActivity.countDownPeriod = 11000;
                         TwoActivity.addCountDownPeriod = 4000;
                         stateRadioButton = "easy";
                         break;
                     case R.id.radioButtonMedium:
+                        MainActivity.playSoundPoolSnap(MainActivity.soundIdSnap);
                         TwoActivity.countDownPeriod = 9000;
                         TwoActivity.addCountDownPeriod = 3000;
                         stateRadioButton = "medium";
                         break;
                     case R.id.radioButtonHard:
+                        MainActivity.playSoundPoolSnap(MainActivity.soundIdSnap);
                         TwoActivity.countDownPeriod = 8000;
                         TwoActivity.addCountDownPeriod = 3000;
                         stateRadioButton = "hard";
@@ -73,13 +76,13 @@ public class Fragment_level extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
+        MainActivity.playSoundPoolSnap(MainActivity.soundIdSnap);
         saveText();
         fragmentTransaction = getFragmentManager().beginTransaction();
         if (view.getId() == R.id.imCloseWindowLevel) {
             fragmentTransaction.remove(this);
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
             fragmentTransaction.commit();
-
         }
     }
 

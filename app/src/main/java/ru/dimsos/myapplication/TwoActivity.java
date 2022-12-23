@@ -1,7 +1,8 @@
 package ru.dimsos.myapplication;
 
 import android.annotation.SuppressLint;
-import android.media.MediaPlayer;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -11,21 +12,25 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 public class TwoActivity extends AppCompatActivity implements View.OnClickListener {
+
+    SoundPool soundPool;
+    int soundIdPressed;
+    int soundIdNotPressed;
 
     CountDownTimer timer;
     Dialog_fragment dialog_fragment;
 
     Button btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9;
-    TextView tvResult;
+    TextView tvGuessNumber;
     TextView tvTimer;
 
-    private MediaPlayer onSound, offSound;
     public static Integer levelMind = 0;
     int currentInt = 0;
     int min = 1;
@@ -33,23 +38,23 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
     Integer number = 10;
     static long countDownPeriod = 11000;
     static long addCountDownPeriod = 4000;
-    Button[] btn;
-    boolean[] btnCheck = new boolean[]{false, false, false, false, false, false, false, false, false};
-    Button[] listButton;
+    boolean[] buttonsGameStatus = new boolean[] {false, false, false, false, false, false, false, false, false};
+    Button[] buttonsGame;
     int checkIndex = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.two);
+        setTitle("");
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
+        soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+        soundIdPressed = soundPool.load(this, R.raw.click4, 1);
+        soundIdNotPressed = soundPool.load(this, R.raw.click5, 1);
 
         dialog_fragment = new Dialog_fragment();
-
-
-        onSound = MediaPlayer.create(this, R.raw.sound_on);
-        offSound = MediaPlayer.create(this, R.raw.sound_off);
 
         btn1 = findViewById(R.id.button1);
         btn2 = findViewById(R.id.button2);
@@ -61,10 +66,10 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
         btn8 = findViewById(R.id.button8);
         btn9 = findViewById(R.id.button9);
 
-        listButton = new Button[] {btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9};
+        buttonsGame = new Button[] {btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9};
 
         tvTimer = findViewById(R.id.tvTimer);
-        tvResult = findViewById(R.id.tvResult);
+        tvGuessNumber = findViewById(R.id.tvResult);
 
         btn1.setOnClickListener(this);
         btn2.setOnClickListener(this);
@@ -76,18 +81,13 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
         btn8.setOnClickListener(this);
         btn9.setOnClickListener(this);
 
-        btn = new Button[]{btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9};
-
         checkStateFragmentLevel();
 
         startGame();
     }
 
-    @Override
-    protected void onDestroy() {
-        MainActivity.dbManager.updateLevel();
-        super.onDestroy();
-        timer.cancel();
+    public void playSoundPool(int soundID) {
+        soundPool.play(soundID, 1, 1, 0, 0, 1);
     }
 
     @Override
@@ -97,11 +97,28 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
         recreate();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MainActivity.dbManager.updateLevel();
+        timer.cancel();
+    }
+
     // Метод для уровня игры hard.
-    public void checkCurrentNumber(int index) {
-        if (MainActivity.savedRadioButton.equals("hard")) {
+    public void checkResultHardLevel(int index) {
+        if (MainActivity.savedRadioButtonLevelGame.equals("hard")) {
             if (currentInt > number) {
-                listButton[index].setBackgroundColor(getResources().getColor(R.color.pink));
+                buttonsGame[index].setBackgroundColor(getResources().getColor(R.color.pink));
                 timer.cancel();
                 dialog_fragment.show(getFragmentManager(), "dialog");
             }
@@ -112,7 +129,6 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
 
         checkIndex = 0;
         currentInt = 0;
-        int index = 0;
         max = 10;
 
         if (levelMind >= 10) max += 2;
@@ -122,53 +138,49 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
         if (levelMind >= 20) max += 2;
 
         String strNumber = number.toString();
-        tvResult.setText(strNumber);
+        tvGuessNumber.setText(strNumber);
 
-        ArrayList<Integer> list = checkList();
+        List<Integer> RandomNumbers = checkCorrectGenerationRandomNumbers();
 
         Animation animButton = AnimationUtils.loadAnimation(this, R.anim.my_scale);
 
         startTimer();
 
-        int check = 0;
-
         // Обнуляем список  btnCheck
-        for (Button button : btn) {
+        for (Button button : buttonsGame) {
             button.setBackgroundColor(getResources().getColor(R.color.not_pressed));
-            btnCheck[check] = false;
-            check++;
+            Arrays.fill(buttonsGameStatus, false);
         }
 
         // Инициализируем кнопки данными из checkList()
-        for (Button button : btn) {
-            button.setText(String.valueOf(list.get(index)));
-            index++;
-
+        for (int i = 0; i < buttonsGame.length; i++) {
+            buttonsGame[i].setText(String.valueOf(RandomNumbers.get(i)));
         }
-        for (Button button : btn) {
+
+        for (Button button : buttonsGame) {
             button.startAnimation(animButton);
         }
     }
 
     // Метод проверяющий корректную генерацию чисел для кнопок
-    public ArrayList<Integer> checkList() {
+    public List<Integer> checkCorrectGenerationRandomNumbers() {
         int sum;
-        ArrayList<Integer> checkList = new ArrayList<>();
+        List<Integer> randomNumbers = new ArrayList<>();
         for (int i = 0; i < 9; i++) {
-            double random = (Math.random() * (max - min)) + min;
-            checkList.add((int) random);
+            double randomNumber = (Math.random() * (max - min)) + min;
+            randomNumbers.add((int) randomNumber);
         }
-
-        for (int i = 0; i < checkList.size(); i++) {
-            sum = checkList.get(i);
-            for (int j = 1; j < checkList.size(); j++) {
-                sum += checkList.get(j);
-                if (sum == Integer.parseInt(tvResult.getText().toString())) {
-                    return checkList;
+        // Проверяем, чтобы в списке рандомных чисел была сумма числа, которое мы отгадываем.
+        for (int i = 0; i < randomNumbers.size(); i++) {
+            sum = randomNumbers.get(i);
+            for (int j = 1; j < randomNumbers.size(); j++) {
+                sum += randomNumbers.get(j);
+                if (sum == Integer.parseInt(tvGuessNumber.getText().toString())) {
+                    return randomNumbers;
                 }
             }
         }
-        return checkList();
+        return checkCorrectGenerationRandomNumbers();
     }
 
     public void startTimer() {
@@ -186,20 +198,16 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
         }.start();
     }
 
-    public void SoundPlay(MediaPlayer sound) {
-        sound.start();
-    }
-
     public void checkStateFragmentLevel() {
-        if (MainActivity.savedRadioButton.equals("easy")) {
+        if (MainActivity.savedRadioButtonLevelGame.equals("easy")) {
             countDownPeriod = 11000;
             addCountDownPeriod = 4000;
         }
-        if (MainActivity.savedRadioButton.equals("medium")) {
+        if (MainActivity.savedRadioButtonLevelGame.equals("medium")) {
             countDownPeriod = 8000;
             addCountDownPeriod = 3000;
         }
-        if (MainActivity.savedRadioButton.equals("hard")) {
+        if (MainActivity.savedRadioButtonLevelGame.equals("hard")) {
             countDownPeriod = 7000;
             addCountDownPeriod = 3000;
         }
@@ -210,129 +218,129 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button1:
-                if (!btnCheck[0]) {
-                    SoundPlay(onSound);
+                if (!buttonsGameStatus[0]) {
+                    playSoundPool(soundIdPressed);
                     currentInt = currentInt + Integer.parseInt(btn1.getText().toString());
                     btn1.setBackgroundColor(getResources().getColor(R.color.pressed));
-                    checkCurrentNumber(0);
-                    btnCheck[0] = true;
+                    checkResultHardLevel(0);
+                    buttonsGameStatus[0] = true;
                 } else {
-                    SoundPlay(offSound);
+                    playSoundPool(soundIdNotPressed);
                     btn1.setBackgroundColor(getResources().getColor(R.color.not_pressed));
                     currentInt = currentInt - Integer.parseInt(btn1.getText().toString());
-                    btnCheck[0] = false;
+                    buttonsGameStatus[0] = false;
                 }
                 break;
             case R.id.button2:
-                if (!btnCheck[1]) {
-                    SoundPlay(onSound);
+                if (!buttonsGameStatus[1]) {
+                    playSoundPool(soundIdPressed);
                     currentInt = currentInt + Integer.parseInt(btn2.getText().toString());
                     btn2.setBackgroundColor(getResources().getColor(R.color.pressed));
-                    checkCurrentNumber(1);
-                    btnCheck[1] = true;
+                    checkResultHardLevel(1);
+                    buttonsGameStatus[1] = true;
                 } else {
-                    SoundPlay(offSound);
+                    playSoundPool(soundIdNotPressed);
                     btn2.setBackgroundColor(getResources().getColor(R.color.not_pressed));
                     currentInt = currentInt - Integer.parseInt(btn2.getText().toString());
-                    btnCheck[1] = false;
+                    buttonsGameStatus[1] = false;
                 }
                 break;
             case R.id.button3:
-                if (!btnCheck[2]) {
-                    SoundPlay(onSound);
+                if (!buttonsGameStatus[2]) {
+                    playSoundPool(soundIdPressed);
                     currentInt = currentInt + Integer.parseInt(btn3.getText().toString());
                     btn3.setBackgroundColor(getResources().getColor(R.color.pressed));
-                    checkCurrentNumber(2);
-                    btnCheck[2] = true;
+                    checkResultHardLevel(2);
+                    buttonsGameStatus[2] = true;
                 } else {
-                    SoundPlay(offSound);
+                    playSoundPool(soundIdNotPressed);
                     btn3.setBackgroundColor(getResources().getColor(R.color.not_pressed));
                     currentInt = currentInt - Integer.parseInt(btn3.getText().toString());
-                    btnCheck[2] = false;
+                    buttonsGameStatus[2] = false;
                 }
                 break;
             case R.id.button4:
-                if (!btnCheck[3]) {
-                    SoundPlay(onSound);
+                if (!buttonsGameStatus[3]) {
+                    playSoundPool(soundIdPressed);
                     currentInt = currentInt + Integer.parseInt(btn4.getText().toString());
                     btn4.setBackgroundColor(getResources().getColor(R.color.pressed));
-                    checkCurrentNumber(3);
-                    btnCheck[3] = true;
+                    checkResultHardLevel(3);
+                    buttonsGameStatus[3] = true;
                 } else {
-                    SoundPlay(offSound);
+                    playSoundPool(soundIdNotPressed);
                     btn4.setBackgroundColor(getResources().getColor(R.color.not_pressed));
                     currentInt = currentInt - Integer.parseInt(btn4.getText().toString());
-                    btnCheck[3] = false;
+                    buttonsGameStatus[3] = false;
                 }
                 break;
             case R.id.button5:
-                if (!btnCheck[4]) {
-                    SoundPlay(onSound);
+                if (!buttonsGameStatus[4]) {
+                    playSoundPool(soundIdPressed);
                     currentInt = currentInt + Integer.parseInt(btn5.getText().toString());
                     btn5.setBackgroundColor(getResources().getColor(R.color.pressed));
-                    checkCurrentNumber(4);
-                    btnCheck[4] = true;
+                    checkResultHardLevel(4);
+                    buttonsGameStatus[4] = true;
                 } else {
-                    SoundPlay(offSound);
+                    playSoundPool(soundIdNotPressed);
                     btn5.setBackgroundColor(getResources().getColor(R.color.not_pressed));
                     currentInt = currentInt - Integer.parseInt(btn5.getText().toString());
-                    btnCheck[4] = false;
+                    buttonsGameStatus[4] = false;
                 }
                 break;
             case R.id.button6:
-                if (!btnCheck[5]) {
-                    SoundPlay(onSound);
+                if (!buttonsGameStatus[5]) {
+                    playSoundPool(soundIdPressed);
                     currentInt = currentInt + Integer.parseInt(btn6.getText().toString());
                     btn6.setBackgroundColor(getResources().getColor(R.color.pressed));
-                    checkCurrentNumber(5);
-                    btnCheck[5] = true;
+                    checkResultHardLevel(5);
+                    buttonsGameStatus[5] = true;
                 } else {
-                    SoundPlay(offSound);
+                    playSoundPool(soundIdNotPressed);
                     btn6.setBackgroundColor(getResources().getColor(R.color.not_pressed));
                     currentInt = currentInt - Integer.parseInt(btn6.getText().toString());
-                    btnCheck[5] = false;
+                    buttonsGameStatus[5] = false;
                 }
                 break;
             case R.id.button7:
-                if (!btnCheck[6]) {
-                    SoundPlay(onSound);
+                if (!buttonsGameStatus[6]) {
+                    playSoundPool(soundIdPressed);
                     currentInt = currentInt + Integer.parseInt(btn7.getText().toString());
                     btn7.setBackgroundColor(getResources().getColor(R.color.pressed));
-                    checkCurrentNumber(6);
-                    btnCheck[6] = true;
+                    checkResultHardLevel(6);
+                    buttonsGameStatus[6] = true;
                 } else {
-                    SoundPlay(offSound);
+                    playSoundPool(soundIdNotPressed);
                     btn7.setBackgroundColor(getResources().getColor(R.color.not_pressed));
                     currentInt = currentInt - Integer.parseInt(btn7.getText().toString());
-                    btnCheck[6] = false;
+                    buttonsGameStatus[6] = false;
                 }
                 break;
             case R.id.button8:
-                if (!btnCheck[7]) {
-                    SoundPlay(onSound);
+                if (!buttonsGameStatus[7]) {
+                    playSoundPool(soundIdPressed);
                     currentInt = currentInt + Integer.parseInt(btn8.getText().toString());
                     btn8.setBackgroundColor(getResources().getColor(R.color.pressed));
-                    checkCurrentNumber(7);
-                    btnCheck[7] = true;
+                    checkResultHardLevel(7);
+                    buttonsGameStatus[7] = true;
                 } else {
-                    SoundPlay(offSound);
+                    playSoundPool(soundIdNotPressed);
                     btn8.setBackgroundColor(getResources().getColor(R.color.not_pressed));
                     currentInt = currentInt - Integer.parseInt(btn8.getText().toString());
-                    btnCheck[7] = false;
+                    buttonsGameStatus[7] = false;
                 }
                 break;
             case R.id.button9:
-                if (!btnCheck[8]) {
-                    SoundPlay(onSound);
+                if (!buttonsGameStatus[8]) {
+                    playSoundPool(soundIdPressed);
                     currentInt = currentInt + Integer.parseInt(btn9.getText().toString());
                     btn9.setBackgroundColor(getResources().getColor(R.color.pressed));
-                    checkCurrentNumber(8);
-                    btnCheck[8] = true;
+                    checkResultHardLevel(8);
+                    buttonsGameStatus[8] = true;
                 } else {
-                    SoundPlay(offSound);
+                    playSoundPool(soundIdNotPressed);
                     btn9.setBackgroundColor(getResources().getColor(R.color.not_pressed));
                     currentInt = currentInt - Integer.parseInt(btn9.getText().toString());
-                    btnCheck[8] = false;
+                    buttonsGameStatus[8] = false;
                 }
             default:
                 break;
@@ -341,7 +349,7 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
         if (currentInt == number) {
 
             Animation animResult = AnimationUtils.loadAnimation(this, R.anim.my_rotate_scale);
-            tvResult.startAnimation(animResult);
+            tvGuessNumber.startAnimation(animResult);
 
             number++;
             levelMind++;
