@@ -29,7 +29,6 @@ public class Fragment_sound extends Fragment implements View.OnClickListener, Co
 
     FragmentTransaction fragmentTransaction;
     ImageButton imCloseWindowSound;
-    Button btnSoundtrack;
     SwitchCompat switchClick, switchMusic;
 
     PopupMenu popup;
@@ -45,46 +44,10 @@ public class Fragment_sound extends Fragment implements View.OnClickListener, Co
         imCloseWindowSound = (ImageButton) view.findViewById(R.id.imCloseWindowSound);
         imCloseWindowSound.setOnClickListener(this);
 
-        btnSoundtrack = view.findViewById(R.id.soundtrack);
-        btnSoundtrack.setOnClickListener(this);
-
         switchClick = view.findViewById(R.id.switchClick);
         switchClick.setOnCheckedChangeListener(this);
         switchMusic = view.findViewById(R.id.switchMusic);
         switchMusic.setOnCheckedChangeListener(this);
-
-        popup = new PopupMenu(getActivity(), btnSoundtrack);
-        popup.getMenu().add(Menu.CATEGORY_CONTAINER, 0, Menu.NONE, "music");
-        popup.getMenu().add(Menu.NONE, 1, Menu.NONE, "track2");
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case 0:
-                        if (switchMusic.isChecked()) {
-                            StartActivity.playExoPlayer(StartActivity.mediaItem1);
-                            StartActivity.startTrack = StartActivity.mediaItem1;
-//                            StartActivity.numberSaveTrack = "1";
-                            StartActivity.startUriMusic = RawResourceDataSource.buildRawResourceUri(R.raw.music);
-                            saveTrackPref();
-                            Log.d(LOG_TAG, "Save sPref in Fragment sound");
-                        }
-                        break;
-                    case 1:
-                        if (switchMusic.isChecked()) {
-                            StartActivity.playExoPlayer(StartActivity.mediaItem2);
-//                            StartActivity.numberSaveTrack = "2";
-                            StartActivity.startTrack = StartActivity.mediaItem2;
-                            StartActivity.startUriMusic = RawResourceDataSource.buildRawResourceUri(R.raw.track1);
-                            saveTrackPref();
-                            Log.d(LOG_TAG, "Save sPref in Fragment sound");
-                        }
-                        break;
-                }
-                return true;
-            }
-        });
-
         return view;
     }
 
@@ -107,9 +70,6 @@ public class Fragment_sound extends Fragment implements View.OnClickListener, Co
                 fragmentTransaction.remove(this);
                 fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
                 fragmentTransaction.commit();
-                break;
-            case R.id.soundtrack:
-                popup.show();
                 break;
             case R.id.switchClick:
             case R.id.switchMusic:

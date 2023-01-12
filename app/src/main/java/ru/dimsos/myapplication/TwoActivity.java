@@ -1,6 +1,7 @@
 package ru.dimsos.myapplication;
 
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
@@ -31,6 +32,8 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
     TextView tvGuessNumber;
     TextView tvTimer;
 
+    SharedPreferences sPref;
+
     public static Integer levelMind = 0;
     int currentInt = 0;
     int min = 1;
@@ -38,7 +41,7 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
     Integer number = 10;
     static long countDownPeriod = 11000;
     static long addCountDownPeriod = 4000;
-    boolean[] buttonsGameStatus = new boolean[] {false, false, false, false, false, false, false, false, false};
+    boolean[] buttonsGameStatus = new boolean[]{false, false, false, false, false, false, false, false, false};
     Button[] buttonsGame;
     int checkIndex = 0;
 
@@ -66,7 +69,7 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
         btn8 = findViewById(R.id.button8);
         btn9 = findViewById(R.id.button9);
 
-        buttonsGame = new Button[] {btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9};
+        buttonsGame = new Button[]{btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9};
 
         tvTimer = findViewById(R.id.tvTimer);
         tvGuessNumber = findViewById(R.id.tvResult);
@@ -81,6 +84,8 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
         btn8.setOnClickListener(this);
         btn9.setOnClickListener(this);
 
+        StartActivity.resumeExoPlayer();
+
         checkStateFragmentLevel();
 
         startGame();
@@ -94,17 +99,26 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
     protected void onRestart() {
         super.onRestart();
         timer.cancel();
+        levelMind = 0;
         recreate();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        StartActivity.resumeExoPlayer();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        StartActivity.pauseExoPlayer();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+//        StartActivity.pauseExoPlayer();
     }
 
     @Override
@@ -140,7 +154,7 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
         String strNumber = number.toString();
         tvGuessNumber.setText(strNumber);
 
-        List<Integer> RandomNumbers = checkCorrectGenerationRandomNumbers();
+        int[] randomNumbers = checkCorrectGenerationRandomNumbers();
 
         Animation animButton = AnimationUtils.loadAnimation(this, R.anim.my_scale);
 
@@ -152,9 +166,9 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
             Arrays.fill(buttonsGameStatus, false);
         }
 
-        // Инициализируем кнопки данными из checkList()
+        // Инициализируем кнопки данными из randomNumbers
         for (int i = 0; i < buttonsGame.length; i++) {
-            buttonsGame[i].setText(String.valueOf(RandomNumbers.get(i)));
+            buttonsGame[i].setText(String.valueOf(randomNumbers[i]));
         }
 
         for (Button button : buttonsGame) {
@@ -162,21 +176,26 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
         }
     }
 
+    public void buttonUnClickable() {
+        for (Button button : buttonsGame) {
+            button.setEnabled(false);
+        }
+    }
+
     // Метод проверяющий корректную генерацию чисел для кнопок
-    public List<Integer> checkCorrectGenerationRandomNumbers() {
-        int sum;
-        List<Integer> randomNumbers = new ArrayList<>();
+    public int[] checkCorrectGenerationRandomNumbers() {
+
+        int[] checkList = new int[9];
         for (int i = 0; i < 9; i++) {
             double randomNumber = (Math.random() * (max - min)) + min;
-            randomNumbers.add((int) randomNumber);
+            checkList[i] = (int) randomNumber;
         }
         // Проверяем, чтобы в списке рандомных чисел была сумма числа, которое мы отгадываем.
-        for (int i = 0; i < randomNumbers.size(); i++) {
-            sum = randomNumbers.get(i);
-            for (int j = 1; j < randomNumbers.size(); j++) {
-                sum += randomNumbers.get(j);
-                if (sum == Integer.parseInt(tvGuessNumber.getText().toString())) {
-                    return randomNumbers;
+        for (int i : checkList) {
+            for (int j = 1; j < checkList.length; j++) {
+                for (int k = 0; i < checkList.length; i++) {
+                    int sum = i + checkList[j] + checkList[k];
+                    if (sum == number) return checkList;
                 }
             }
         }
@@ -348,14 +367,15 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
 
         if (currentInt == number) {
 
+            String strNewTimer = tvTimer.getText().toString().replace(" ", "");
+            int intIntentNewTimer = Integer.parseInt(strNewTimer);
+
             Animation animResult = AnimationUtils.loadAnimation(this, R.anim.my_rotate_scale);
             tvGuessNumber.startAnimation(animResult);
 
             number++;
             levelMind++;
 
-            String strNewTimer = tvTimer.getText().toString().replace(" ", "");
-            int intIntentNewTimer = Integer.parseInt(strNewTimer);
             countDownPeriod = (intIntentNewTimer * 1000L) + addCountDownPeriod;
             timer.cancel();
 

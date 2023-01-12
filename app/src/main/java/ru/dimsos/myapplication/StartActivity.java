@@ -34,6 +34,9 @@ public class StartActivity extends AppCompatActivity {
     static MediaItem startTrack;
     static MediaItem mediaItem1;
     static MediaItem mediaItem2;
+    static MediaItem mediaItem3;
+    static MediaItem mediaItem4;
+    static MediaItem mediaItem5;
 
     TextView tvSmartPhrase, tvAuthor;
     String[] phrases;
@@ -66,9 +69,15 @@ public class StartActivity extends AppCompatActivity {
 
         Uri music = RawResourceDataSource.buildRawResourceUri(R.raw.music);
         Uri track = RawResourceDataSource.buildRawResourceUri(R.raw.track1);
+        Uri nanorobot = RawResourceDataSource.buildRawResourceUri(R.raw.nanorobot_tune);
+        Uri track4 = RawResourceDataSource.buildRawResourceUri(R.raw.track4);
+        Uri track5 = RawResourceDataSource.buildRawResourceUri(R.raw.track5);
 
         mediaItem1 = MediaItem.fromUri(music);
         mediaItem2 = MediaItem.fromUri(track);
+        mediaItem3 = MediaItem.fromUri(nanorobot);
+        mediaItem4 = MediaItem.fromUri(track4);
+        mediaItem5 = MediaItem.fromUri(track5);
 
         loadTrackPref();
 
@@ -120,11 +129,13 @@ public class StartActivity extends AppCompatActivity {
     }
 
     public static void pauseExoPlayer() {
-        exoPlayer.pause();
+        exoPlayer.setPlayWhenReady(false);
+        exoPlayer.getPlaybackState();
     }
 
     public static void resumeExoPlayer() {
-        exoPlayer.play();
+        exoPlayer.setPlayWhenReady(true);
+        exoPlayer.getPlaybackState();
     }
 
     public static void releaseExoPlayer() {
@@ -140,7 +151,7 @@ public class StartActivity extends AppCompatActivity {
 
     public void showSmartPhrases() {
         double randomNumber = (Math.random() * (max - min)) + min;
-        List<String> keys = new ArrayList<String>(smartPhrases.keySet());
+        List<String> keys = new ArrayList<>(smartPhrases.keySet());
         String text = keys.get((int) randomNumber);
         String textAuthor = smartPhrases.get(keys.get((int) randomNumber));
         tvSmartPhrase.setText(text);
@@ -161,12 +172,11 @@ public class StartActivity extends AppCompatActivity {
         @Override
         public void run() {
             try {
-                Thread.sleep(5300);
+                Thread.sleep(5300); // 5300
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             Intent main = new Intent(getApplicationContext(), MainActivity.class);
-//            main.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(main);
         }
     }

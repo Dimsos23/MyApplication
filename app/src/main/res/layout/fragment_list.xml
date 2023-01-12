@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="345dp"
+    android:layout_height="230dp"
+    android:layout_gravity="center"
+    android:layout_marginStart="50dp"
+    android:background="@drawable/round_my_fragment"
+    android:orientation="vertical">
+
+    <fragment
+        android:name="ru.dimsos.myapplication.SingleListFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </fragment>
+</LinearLayout>

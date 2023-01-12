@@ -6,30 +6,37 @@
         android:title="@string/account_menu"
         android:id="@+id/account_menu"
         android:icon="@drawable/account_icon"
-        app:showAsAction="never"
+        android:titleCondensed="Account"
+        android:contentDescription="@string/account"
+        android:orderInCategory="1"
+        app:showAsAction="always"
         />
     <item
         android:title="@string/sound_menu"
         android:id="@+id/sound_menu"
         android:icon="@drawable/sound_icon"
-        app:showAsAction="never"
+        app:showAsAction="always"
+        android:orderInCategory="3"
         />
     <item
-        android:title="@string/style_menu"
-        android:id="@+id/style_menu"
-        android:icon="@drawable/style_icon2"
-        app:showAsAction="never"
+        android:title="@string/soundtracks"
+        android:id="@+id/soundtrack_menu"
+        android:icon="@drawable/ic_library_music"
+        app:showAsAction="always"
+        android:orderInCategory="4"
         />
     <item
         android:title="@string/level_menu"
         android:id="@+id/level_menu"
         android:icon="@drawable/level_icon"
-        app:showAsAction="never"
+        app:showAsAction="always"
+        android:orderInCategory="2"
         />
     <item
         android:title="@string/exit_menu"
         android:id="@+id/exit_menu"
         android:icon="@drawable/exit_icon"
-        app:showAsAction="never"
+        app:showAsAction="always"
+        android:orderInCategory="5"
         />
 </menu>

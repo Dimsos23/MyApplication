@@ -1,5 +1,9 @@
 package ru.dimsos.myapplication;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
@@ -11,8 +15,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,11 +28,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
-import androidx.navigation.NavController;
-import androidx.preference.PreferenceManager;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -44,23 +50,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public static Map<String, String> listUser = new HashMap<>();
 
+    SingleListFragment listFragment;
     Fragment_account fragment_account;
     Fragment_sound fragment_sound;
     Fragment_level fragment_level;
-    Fragment_style fragment_style;
     FragmentTransaction fTrans;
 
     FrameLayout fragContMain;
+    static ViewGroup.LayoutParams layoutParams;
+
+    ObjectAnimator pulseAnimationX;
+    ObjectAnimator pulseAnimationY;
 
     Button btnPlay, btnRules;
+    ImageButton imageButtonClose;
+    static ImageView imBrain;
     static TextView tvCurrentAccount;
     static TextView tvLevelMind;
 
     String strLevelMind = TwoActivity.levelMind.toString();
     int intLevelMindTwo = TwoActivity.levelMind;
     static String savedRadioButtonLevelGame;
-    NavController navController;
 
+
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         WindowInsetsControllerCompat windowInsetsController =
@@ -70,7 +83,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-        setTitle(""); // Убираем заголовок в ActionBar
+        // Убираем заголовок в ActionBar
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
         dbManager = new DbManager(this);
 
@@ -79,10 +93,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         fragContMain = findViewById(R.id.fragContMain);
 
+        listFragment = new SingleListFragment();
         fragment_account = new Fragment_account();
         fragment_sound = new Fragment_sound();
         fragment_level = new Fragment_level();
-        fragment_style = new Fragment_style();
+
+        imBrain = findViewById(R.id.imBrain);
+
+        imageButtonClose = findViewById(R.id.imageButtonClose);
+        imageButtonClose.setOnClickListener(this);
 
         btnPlay = findViewById(R.id.btnPlay);
         btnPlay.setOnClickListener(this);
@@ -99,12 +118,72 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dbManager.readDatabase();
 
         // Если база данных пуста, то мы не загружаем данные с SharedPreferences
-        if (!listUser.isEmpty()) loadText();
+//        if (!listUser.isEmpty()) loadText();
 
         int currentLevelAccount = Integer.parseInt(tvLevelMind.getText().toString());
 
         // Сохраняем в SharedPreference уровень только если он стал больше, чем был.
         if (currentLevelAccount < intLevelMindTwo) saveText();
+
+        setImageBrainSize();
+        startPulseAnimationImageBrain();
+        StartActivity.resumeExoPlayer();
+
+    }
+
+    public void startPulseAnimationImageBrain() {
+        AnimatorSet animatorSet = new AnimatorSet();
+
+        pulseAnimationX = ObjectAnimator.ofFloat(imBrain, "scaleX", 1f, 1.1f);
+        pulseAnimationX.setDuration(500);
+        pulseAnimationX.setRepeatCount(ValueAnimator.INFINITE);
+        pulseAnimationX.setRepeatMode(ValueAnimator.REVERSE);
+
+        pulseAnimationY = ObjectAnimator.ofFloat(imBrain, "scaleY", 1f, 1.1f);
+        pulseAnimationY.setDuration(500);
+        pulseAnimationY.setRepeatCount(ValueAnimator.INFINITE);
+        pulseAnimationY.setRepeatMode(ValueAnimator.REVERSE);
+
+        animatorSet.playTogether(pulseAnimationX, pulseAnimationY);
+        animatorSet.start();
+    }
+
+    public static void setImageBrainSize() {
+        layoutParams = imBrain.getLayoutParams();
+        int intLevelMind = Integer.parseInt(tvLevelMind.getText().toString());
+        if (intLevelMind == 0) {
+            layoutParams.width = 150;
+            layoutParams.height = 150;
+        }
+        if (intLevelMind >= 5) {
+            layoutParams.width = 200;
+            layoutParams.height = 200;
+        }
+        if (intLevelMind >= 10) {
+            layoutParams.width = 400;
+            layoutParams.height = 400;
+        }
+        if (intLevelMind >= 15) {
+            layoutParams.width = 600;
+            layoutParams.height = 600;
+        }
+        if (intLevelMind >= 20) {
+            layoutParams.width = 800;
+            layoutParams.height = 800;
+        }
+        if (intLevelMind >= 25) {
+            layoutParams.width = 1000;
+            layoutParams.height = 1000;
+        }
+        if (intLevelMind >= 30) {
+            layoutParams.width = 1200;
+            layoutParams.height = 1200;
+        }
+        if (intLevelMind >= 35) {
+            layoutParams.width = 1500;
+            layoutParams.height = 1500;
+        }
+        imBrain.setLayoutParams(layoutParams);
     }
 
     public static void playSoundPoolSnap(int soundID) {
@@ -134,8 +213,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     void saveTrackPref() {
         Log.d(LOG_TAG, "save SharedPreference with MainActivity");
-//        sPrefMusic = getPreferences(MODE_PRIVATE);
-        sPrefMusic = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        sPrefMusic = getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor editor = sPrefMusic.edit();
         editor.putString(Constant.SAVED_TRACK, String.valueOf(StartActivity.startUriMusic));
         editor.apply();
@@ -143,15 +221,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         dbManager.openDatabase();
         dbManager.readDatabase();
+        loadText();
+        setImageBrainSize();
+        StartActivity.resumeExoPlayer();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        StartActivity.pauseExoPlayer();
     }
 
     @Override
@@ -177,9 +259,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         fTrans = getFragmentManager().beginTransaction();
+        fTrans.remove(listFragment);
         fTrans.remove(fragment_sound);
         fTrans.remove(fragment_account);
-        fTrans.remove(fragment_style);
         fTrans.remove(fragment_level);
         switch (item.getItemId()) {
             case R.id.account_menu:
@@ -191,8 +273,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.level_menu:
                 fTrans.add(R.id.fragContMain, fragment_level);
                 break;
-            case R.id.style_menu:
-                fTrans.add(R.id.fragContMain, fragment_style);
+            case R.id.soundtrack_menu:
+                imageButtonClose.setVisibility(View.VISIBLE);
+                fTrans.add(R.id.fragContMain, listFragment);
                 break;
             case R.id.exit_menu:
                 finishAffinity();
@@ -221,6 +304,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (v.getId() == R.id.btnRules) {
             playSoundPoolSnap(soundIdSnap);
             Toast.makeText(this, "else not realized", Toast.LENGTH_SHORT).show();
+        }
+        if (v.getId() == R.id.imageButtonClose) { // Закрытие ListFragment
+            getFragmentManager().beginTransaction().remove(listFragment).commit();
+            imageButtonClose.setVisibility(View.GONE);
         }
     }
 

@@ -18,6 +18,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import androidx.annotation.Nullable;
+import androidx.preference.PreferenceManager;
+
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -194,6 +196,7 @@ public class Fragment_account extends Fragment implements View.OnClickListener {
                         MainActivity.tvLevelMind.setText(level);
                         saveText();
                         MainActivity.playSoundPoolSnap(MainActivity.soundIdSnap);
+                        MainActivity.setImageBrainSize();
                         closeFragWindow();
                     } else {
                         snackbar.setText("Не верный пароль или имя пользователя!");
@@ -211,6 +214,7 @@ public class Fragment_account extends Fragment implements View.OnClickListener {
                     snackbar.setText("Регистрация прошла успешно");
                     snackbar.show();
                     MainActivity.playSoundPoolSnap(MainActivity.soundIdSnap);
+                    MainActivity.setImageBrainSize();
                     closeFragWindow();
                 }
                 break;
