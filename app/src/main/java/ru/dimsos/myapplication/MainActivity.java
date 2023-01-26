@@ -5,9 +5,7 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
@@ -22,13 +20,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -36,19 +32,14 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-
     final String LOG_TAG = "myLogs";
 
     static SoundPool soundPool;
     static int soundIdSnap;
     static boolean switchSnapState = true;
-
-    SharedPreferences sPref;
-    SharedPreferences sPrefMusic;
-
+    SharedPrefsHelper sPref;
     public static DbManager dbManager;
-
-    public static Map<String, String> listUser = new HashMap<>();
+    public static Map<String, String> listUser;
 
     SingleListFragment listFragment;
     Fragment_account fragment_account;
@@ -68,9 +59,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     static TextView tvCurrentAccount;
     static TextView tvLevelMind;
 
-    String strLevelMind = TwoActivity.levelMind.toString();
-    int intLevelMindTwo = TwoActivity.levelMind;
-    static String savedRadioButtonLevelGame;
+    static String currentUserId;
+    String savedRadioButtonLevelGame;
 
 
     @SuppressLint("MissingInflatedId")
@@ -85,8 +75,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         // Убираем заголовок в ActionBar
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
-
-        dbManager = new DbManager(this);
 
         soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
         soundIdSnap = soundPool.load(this, R.raw.click9, 1);
@@ -114,17 +102,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvCurrentAccount = findViewById(R.id.tvCurrentAccount);
         tvCurrentAccount.setOnClickListener(this);
 
+        dbManager = new DbManager(this);
         dbManager.openDatabase();
-        dbManager.readDatabase();
+        listUser = new HashMap<>();
+        dbManager.fillListUsersFromDatabase();
 
-        // Если база данных пуста, то мы не загружаем данные с SharedPreferences
-//        if (!listUser.isEmpty()) loadText();
+        sPref = new SharedPrefsHelper(this);
 
-        int currentLevelAccount = Integer.parseInt(tvLevelMind.getText().toString());
-
-        // Сохраняем в SharedPreference уровень только если он стал больше, чем был.
-        if (currentLevelAccount < intLevelMindTwo) saveText();
-
+        loadAccountId();
+        loadLevelGame();
         setImageBrainSize();
         startPulseAnimationImageBrain();
         StartActivity.resumeExoPlayer();
@@ -148,10 +134,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         animatorSet.start();
     }
 
+    public static void playSoundPoolSnap(int soundID) {
+        if (switchSnapState) {
+            soundPool.play(soundID, 1, 1, 0, 0, 1);
+        }
+    }
+
+    void loadLevelGame() {
+        savedRadioButtonLevelGame = sPref.getString(Constant.SAVED_RADIO);
+        if (savedRadioButtonLevelGame.equals("")) {
+            savedRadioButtonLevelGame = "easy";
+            sPref.putString(Constant.SAVED_RADIO, savedRadioButtonLevelGame);
+        }
+    }
+
+    void initTextFieldsUser() {
+        tvCurrentAccount.setText(dbManager.updateNameFromDatabase(currentUserId));
+        tvLevelMind.setText(dbManager.updateLevelFromDatabase(currentUserId));
+    }
+
+    void loadAccountId() {
+        currentUserId = sPref.getString(Constant.SAVED_USER_ID);
+        if (currentUserId.equals("")) {
+            currentUserId = "1";
+            sPref.putString(Constant.SAVED_USER_ID, currentUserId);
+        }
+        initTextFieldsUser();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        tvLevelMind.setText(dbManager.updateLevelFromDatabase(currentUserId));
+        loadAccountId();
+        setImageBrainSize();
+        StartActivity.resumeExoPlayer();
+    }
+
     public static void setImageBrainSize() {
         layoutParams = imBrain.getLayoutParams();
         int intLevelMind = Integer.parseInt(tvLevelMind.getText().toString());
-        if (intLevelMind == 0) {
+        if (intLevelMind >= 0) {
             layoutParams.width = 150;
             layoutParams.height = 150;
         }
@@ -186,50 +209,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         imBrain.setLayoutParams(layoutParams);
     }
 
-    public static void playSoundPoolSnap(int soundID) {
-        if (switchSnapState) {
-            soundPool.play(soundID, 1, 1, 0, 0, 1);
-        }
-    }
-
-
-    void saveText() {
-        Log.d(LOG_TAG, "save SharedPreference MainActivity");
-        sPref = getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor ed = sPref.edit();
-        ed.putString(Constant.SAVED_LEVEL, strLevelMind);
-        ed.apply();
-    }
-
-    void loadText() {
-        Log.d(LOG_TAG, "load SharedPreference MainActivity");
-        sPref = getPreferences(Context.MODE_PRIVATE);
-        String savedName = sPref.getString(Constant.SAVED_NAME, "");
-        String savedLevel = sPref.getString(Constant.SAVED_LEVEL, "");
-        savedRadioButtonLevelGame = sPref.getString(Constant.SAVED_RADIO, "");
-        tvCurrentAccount.setText(savedName);
-        tvLevelMind.setText(savedLevel);
-    }
-
-    void saveTrackPref() {
-        Log.d(LOG_TAG, "save SharedPreference with MainActivity");
-        sPrefMusic = getPreferences(MODE_PRIVATE);
-        SharedPreferences.Editor editor = sPrefMusic.edit();
-        editor.putString(Constant.SAVED_TRACK, String.valueOf(StartActivity.startUriMusic));
-        editor.apply();
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        dbManager.openDatabase();
-        dbManager.readDatabase();
-        loadText();
-        setImageBrainSize();
-        StartActivity.resumeExoPlayer();
-    }
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -244,8 +223,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        saveTrackPref();
-        dbManager.updateLevel();
         dbManager.closeDatabase();
 
     }
@@ -289,9 +266,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         if (v.getId() == R.id.btnPlay) {
             playSoundPoolSnap(soundIdSnap);
-            // Загружаем данные если в случае, когда MainActivity не перезапускается.
-            loadText();
-            TwoActivity.levelMind = 0;
             Intent intent = new Intent(this, TwoActivity.class);
             startActivity(intent);
         }
@@ -314,6 +288,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        dbManager.closeDatabase();
         finishAffinity();
     }
 }

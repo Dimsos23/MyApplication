@@ -4,17 +4,13 @@ import android.annotation.SuppressLint;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
-import androidx.preference.PreferenceManager;
 
 public class Dialog_fragment extends DialogFragment implements View.OnClickListener {
 
@@ -46,13 +42,8 @@ public class Dialog_fragment extends DialogFragment implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnMenu:
-//                MainActivity.dbManager.updateLevel();
                 MainActivity.playSoundPoolSnap(MainActivity.soundIdSnap);
                 Intent mainIntent = new Intent(getActivity(), MainActivity.class);
-//                mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //Флаг для того,
-                // чтобы нельзя было из MainActivity вернуться в другие Activity нажимая кнопку back
-//               очищает stack активностей.
-                MainActivity.setImageBrainSize();
                 startActivity(mainIntent);
                 getDialog().cancel(); // Для правного перехода на Activity
                 break;
@@ -61,7 +52,6 @@ public class Dialog_fragment extends DialogFragment implements View.OnClickListe
                 TwoActivity.levelMind = 0;
                 Intent twoIntent = new Intent(getActivity(), TwoActivity.class);
                 twoIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                MainActivity.setImageBrainSize();
                 startActivity(twoIntent);
                 getDialog().cancel();  // Для правного перехода на Activity
                 break;

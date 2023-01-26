@@ -1,26 +1,24 @@
 package ru.dimsos.myapplication;
 
 import android.annotation.SuppressLint;
-import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 
 public class TwoActivity extends AppCompatActivity implements View.OnClickListener {
 
+    final String LOG_TAG = "myLogs";
+    SharedPrefsHelper sPref;
     SoundPool soundPool;
     int soundIdPressed;
     int soundIdNotPressed;
@@ -32,8 +30,6 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
     TextView tvGuessNumber;
     TextView tvTimer;
 
-    SharedPreferences sPref;
-
     public static Integer levelMind = 0;
     int currentInt = 0;
     int min = 1;
@@ -44,6 +40,7 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
     boolean[] buttonsGameStatus = new boolean[]{false, false, false, false, false, false, false, false, false};
     Button[] buttonsGame;
     int checkIndex = 0;
+    String radioStateLevel;
 
 
     @Override
@@ -84,6 +81,9 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
         btn8.setOnClickListener(this);
         btn9.setOnClickListener(this);
 
+        sPref = new SharedPrefsHelper(this);
+        radioStateLevel = sPref.getString(Constant.SAVED_RADIO);
+
         StartActivity.resumeExoPlayer();
 
         checkStateFragmentLevel();
@@ -106,6 +106,8 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
     @Override
     protected void onResume() {
         super.onResume();
+        levelMind = 0;
+        checkStateFragmentLevel();
         StartActivity.resumeExoPlayer();
     }
 
@@ -118,23 +120,21 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
     @Override
     protected void onStop() {
         super.onStop();
-//        StartActivity.pauseExoPlayer();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        MainActivity.dbManager.updateLevel();
         timer.cancel();
     }
 
     // Метод для уровня игры hard.
     public void checkResultHardLevel(int index) {
-        if (MainActivity.savedRadioButtonLevelGame.equals("hard")) {
+        if (radioStateLevel.equals("hard")) {
             if (currentInt > number) {
                 buttonsGame[index].setBackgroundColor(getResources().getColor(R.color.pink));
                 timer.cancel();
-                dialog_fragment.show(getFragmentManager(), "dialog");
+                timer.onFinish();
             }
         }
     }
@@ -176,12 +176,6 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    public void buttonUnClickable() {
-        for (Button button : buttonsGame) {
-            button.setEnabled(false);
-        }
-    }
-
     // Метод проверяющий корректную генерацию чисел для кнопок
     public int[] checkCorrectGenerationRandomNumbers() {
 
@@ -211,6 +205,9 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
             }
 
             public void onFinish() {
+                Log.d(LOG_TAG, "Сработал метод onFinish() в startTimer()");
+                int currentLevel = Integer.parseInt(MainActivity.tvLevelMind.getText().toString());
+                if (levelMind > currentLevel) MainActivity.dbManager.updateLevel();
                 dialog_fragment.setCancelable(false); // позволяет диалогу не реагировать на лишние нажатия
                 dialog_fragment.show(getFragmentManager(), "dialog");
             }
@@ -218,15 +215,15 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
     }
 
     public void checkStateFragmentLevel() {
-        if (MainActivity.savedRadioButtonLevelGame.equals("easy")) {
+        if (radioStateLevel.equals("easy")) {
             countDownPeriod = 11000;
             addCountDownPeriod = 4000;
         }
-        if (MainActivity.savedRadioButtonLevelGame.equals("medium")) {
+        if (radioStateLevel.equals("medium")) {
             countDownPeriod = 8000;
             addCountDownPeriod = 3000;
         }
-        if (MainActivity.savedRadioButtonLevelGame.equals("hard")) {
+        if (radioStateLevel.equals("hard")) {
             countDownPeriod = 7000;
             addCountDownPeriod = 3000;
         }

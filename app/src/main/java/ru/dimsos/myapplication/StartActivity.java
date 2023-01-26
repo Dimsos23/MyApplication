@@ -2,34 +2,25 @@ package ru.dimsos.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.preference.PreferenceManager;
-
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
-
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.upstream.RawResourceDataSource;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class StartActivity extends AppCompatActivity {
-
-    static SharedPreferences sPrefMusic;
-
     private static final String LOG_TAG = "myLogs";
-
+    SharedPrefsHelper sPref;
     static ExoPlayer exoPlayer;
-
     static Uri startUriMusic;
     static MediaItem startTrack;
     static MediaItem mediaItem1;
@@ -80,29 +71,22 @@ public class StartActivity extends AppCompatActivity {
         mediaItem5 = MediaItem.fromUri(track5);
 
         loadTrackPref();
-
-        if (startUriMusic == null) startUriMusic = RawResourceDataSource.buildRawResourceUri(R.raw.music);
-        startTrack = MediaItem.fromUri(startUriMusic);
-
         playExoPlayer(startTrack);
 
         showSmartPhrases();
         startMainActivity();
     }
 
-     void saveTrackPref() {
-        Log.d(LOG_TAG, "save SharedPreference StartActivity");
-        sPrefMusic = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        SharedPreferences.Editor editor = sPrefMusic.edit();
-        editor.putString(Constant.SAVED_TRACK, String.valueOf(startUriMusic));
-        editor.apply();
-    }
-
     void loadTrackPref() {
         Log.d(LOG_TAG, "load SharedPreference StartActivity");
-        sPrefMusic = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String stringUri = sPrefMusic.getString(Constant.SAVED_TRACK, "");
-        startUriMusic = Uri.parse(stringUri);
+        sPref = new SharedPrefsHelper(this);
+        String stringUri = sPref.getString(Constant.SAVED_TRACK);
+        if (stringUri.equals("")) {
+            startTrack = mediaItem1;
+        } else {
+            startUriMusic = Uri.parse(stringUri);
+            startTrack = MediaItem.fromUri(startUriMusic);
+        }
     }
 
 
@@ -185,7 +169,6 @@ public class StartActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d(LOG_TAG, "save SharedPreference StartActivity with onDestroy");
-        saveTrackPref();
         releaseExoPlayer();
         Log.d(LOG_TAG, "onDestroy StartActivity");
     }

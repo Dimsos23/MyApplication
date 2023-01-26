@@ -17,7 +17,7 @@ import androidx.annotation.Nullable;
 
 public class Fragment_level extends Fragment implements View.OnClickListener {
 
-    SharedPreferences sPref;
+    SharedPrefsHelper sPrefLevelState;
     static String stateRadioButton;
 
     ImageButton imCloseWindowLevel;
@@ -30,7 +30,9 @@ public class Fragment_level extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.fragment_level, null);
 
-        loadText();
+        sPrefLevelState = new SharedPrefsHelper(getActivity());
+        stateRadioButton = sPrefLevelState.getString(Constant.SAVED_RADIO);
+//        loadRadioStateLevel();
 
         imCloseWindowLevel = view.findViewById(R.id.imCloseWindowLevel);
         imCloseWindowLevel.setOnClickListener(this);
@@ -50,21 +52,18 @@ public class Fragment_level extends Fragment implements View.OnClickListener {
                 switch (checkedId) {
                     case R.id.radioButtonEasy:
                         MainActivity.playSoundPoolSnap(MainActivity.soundIdSnap);
-                        TwoActivity.countDownPeriod = 11000;
-                        TwoActivity.addCountDownPeriod = 4000;
                         stateRadioButton = "easy";
+                        sPrefLevelState.putString(Constant.SAVED_RADIO, stateRadioButton);
                         break;
                     case R.id.radioButtonMedium:
                         MainActivity.playSoundPoolSnap(MainActivity.soundIdSnap);
-                        TwoActivity.countDownPeriod = 9000;
-                        TwoActivity.addCountDownPeriod = 3000;
                         stateRadioButton = "medium";
+                        sPrefLevelState.putString(Constant.SAVED_RADIO, stateRadioButton);
                         break;
                     case R.id.radioButtonHard:
                         MainActivity.playSoundPoolSnap(MainActivity.soundIdSnap);
-                        TwoActivity.countDownPeriod = 8000;
-                        TwoActivity.addCountDownPeriod = 3000;
                         stateRadioButton = "hard";
+                        sPrefLevelState.putString(Constant.SAVED_RADIO, stateRadioButton);
                         break;
                     default:
                         break;
@@ -77,7 +76,6 @@ public class Fragment_level extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         MainActivity.playSoundPoolSnap(MainActivity.soundIdSnap);
-        saveText();
         fragmentTransaction = getFragmentManager().beginTransaction();
         if (view.getId() == R.id.imCloseWindowLevel) {
             fragmentTransaction.remove(this);
@@ -86,21 +84,8 @@ public class Fragment_level extends Fragment implements View.OnClickListener {
         }
     }
 
-    void saveText() {
-        sPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor ed = sPref.edit();
-        ed.putString(Constant.SAVED_RADIO, stateRadioButton);
-        ed.apply();
-    }
-
-    void loadText() {
-        sPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-        stateRadioButton = sPref.getString(Constant.SAVED_RADIO,"");
-    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
-        saveText();
     }
 }

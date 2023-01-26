@@ -2,8 +2,6 @@ package ru.dimsos.myapplication;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -18,17 +16,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import androidx.annotation.Nullable;
-import androidx.preference.PreferenceManager;
-
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
 
 public class Fragment_account extends Fragment implements View.OnClickListener {
 
-    String level = "0";
-
-    SharedPreferences sPref;
+    SharedPrefsHelper sPref;
+    String accountId;
 
     static Button btnEnter;
     static EditText edTextName, edTextPassword;
@@ -40,6 +35,8 @@ public class Fragment_account extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_account_new, null);
+
+        sPref = new SharedPrefsHelper(getActivity());
 
         imCloseWindow = view.findViewById(R.id.imCloseWindow);
         imCloseWindow.setOnClickListener(this);
@@ -94,12 +91,8 @@ public class Fragment_account extends Fragment implements View.OnClickListener {
         }
     };
 
-    void saveText() {
-        sPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor ed = sPref.edit();
-        ed.putString(Constant.SAVED_NAME, edTextName.getText().toString());
-        ed.putString(Constant.SAVED_LEVEL, level);
-        ed.apply();
+    void saveAccountId() {
+        sPref.putString(Constant.SAVED_USER_ID, accountId);
     }
 
     // Внутренний класс для  проверки нависанного в EditText
@@ -130,10 +123,12 @@ public class Fragment_account extends Fragment implements View.OnClickListener {
                     break;
                 } else {
                     // Смена названия кнопки
-                    if (MainActivity.listUser.containsKey(user)) {
-                        btnEnter.setText(R.string.enter);
-                        tilName.setEndIconDrawable(R.drawable.ic_check);
-                    } else {
+                    if (!(MainActivity.listUser == null)) {
+                        if (MainActivity.listUser.containsKey(user)) {
+                            btnEnter.setText(R.string.enter);
+                            tilName.setEndIconDrawable(R.drawable.ic_check);
+                        }
+                    }else {
                         btnEnter.setText(R.string.register);
                         tilName.setEndIconDrawable(R.drawable.ic_clear);
                     }
@@ -175,7 +170,7 @@ public class Fragment_account extends Fragment implements View.OnClickListener {
         String name = edTextName.getText().toString();
         String password = edTextPassword.getText().toString();
 
-        Snackbar snackbar = Snackbar.make(btnEnter, "Успешный вход пользователя", 2000);
+        Snackbar snackbar = Snackbar.make(btnEnter, "Успешный вход пользователя", 1700);
         snackbar.setAnchorView(imCloseWindow);
         snackbar.setTextColor(getResources().getColor(R.color.letters_gray));
         snackbar.setBackgroundTint(getResources().getColor(R.color.frag_color));
@@ -188,13 +183,13 @@ public class Fragment_account extends Fragment implements View.OnClickListener {
                 break;
             case R.id.btnEnter:
                 if (btnEnter.getText().equals("Enter")) {
-                    Boolean check = MainActivity.dbManager.chekPassword(password);
+                    Boolean check = MainActivity.dbManager.checkPassword(password);
                     if (check) {
                         snackbar.show();
-                        level = MainActivity.listUser.get(name);
-                        MainActivity.tvCurrentAccount.setText(name);
-                        MainActivity.tvLevelMind.setText(level);
-                        saveText();
+                        accountId = MainActivity.dbManager.getIdFromDatabase(name);
+                        saveAccountId();
+                        MainActivity.tvCurrentAccount.setText(MainActivity.dbManager.updateNameFromDatabase(accountId));
+                        MainActivity.tvLevelMind.setText(MainActivity.dbManager.updateLevelFromDatabase(accountId));
                         MainActivity.playSoundPoolSnap(MainActivity.soundIdSnap);
                         MainActivity.setImageBrainSize();
                         closeFragWindow();
@@ -204,13 +199,13 @@ public class Fragment_account extends Fragment implements View.OnClickListener {
                     }
                 }
                 if (btnEnter.getText().equals("Register")) {
-                    level = "0";
+                    String level = "0";
                     MainActivity.dbManager.insertDatabase(name, password, level);
-                    MainActivity.dbManager.readDatabase();
-                    String userLevel = MainActivity.listUser.get(name);
-                    MainActivity.tvCurrentAccount.setText(name);
-                    MainActivity.tvLevelMind.setText(userLevel);
-                    saveText();
+                    MainActivity.dbManager.fillListUsersFromDatabase();
+                    accountId = MainActivity.dbManager.getIdFromDatabase(name);
+                    saveAccountId();
+                    MainActivity.tvCurrentAccount.setText(MainActivity.dbManager.updateNameFromDatabase(accountId));
+                    MainActivity.tvLevelMind.setText(MainActivity.dbManager.updateLevelFromDatabase(accountId));
                     snackbar.setText("Регистрация прошла успешно");
                     snackbar.show();
                     MainActivity.playSoundPoolSnap(MainActivity.soundIdSnap);

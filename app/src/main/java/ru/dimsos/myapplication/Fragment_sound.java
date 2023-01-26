@@ -31,8 +31,6 @@ public class Fragment_sound extends Fragment implements View.OnClickListener, Co
     ImageButton imCloseWindowSound;
     SwitchCompat switchClick, switchMusic;
 
-    PopupMenu popup;
-
     public Fragment_sound() {
     }
 
