@@ -6,39 +6,28 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
-import android.widget.PopupMenu;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.preference.PreferenceManager;
 
-import com.google.android.exoplayer2.upstream.RawResourceDataSource;
-
 
 public class Fragment_sound extends Fragment implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
-    private static final String LOG_TAG = "myLogs";
-    SharedPreferences sPrefMusic;
-
+    SharedPrefsHelper sPref;
     FragmentTransaction fragmentTransaction;
     ImageButton imCloseWindowSound;
     SwitchCompat switchClick, switchMusic;
-
-    public Fragment_sound() {
-    }
-
+    String stateMusic;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sound, null);
+        sPref = new SharedPrefsHelper(getActivity());
         imCloseWindowSound = (ImageButton) view.findViewById(R.id.imCloseWindowSound);
         imCloseWindowSound.setOnClickListener(this);
 
@@ -46,18 +35,20 @@ public class Fragment_sound extends Fragment implements View.OnClickListener, Co
         switchClick.setOnCheckedChangeListener(this);
         switchMusic = view.findViewById(R.id.switchMusic);
         switchMusic.setOnCheckedChangeListener(this);
+
+        checkStateMusic();
+
         return view;
     }
 
-    void saveTrackPref() {
-        Log.d(LOG_TAG, "save SharedPreference StartActivity");
-        sPrefMusic = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
-        SharedPreferences.Editor editor = sPrefMusic.edit();
-        editor.putString(Constant.SAVED_TRACK, String.valueOf(StartActivity.startUriMusic));
-        editor.apply();
-
+    void checkStateMusic() {
+        stateMusic = sPref.getString(Constant.SAVED_SWITCH_MUSIC);
+        if (stateMusic.equals("") || stateMusic.equals("On")) {
+            switchMusic.setChecked(true);
+        } else {
+            switchMusic.setChecked(false);
+        }
     }
-
 
     @Override
     public void onClick(View v) {
@@ -85,7 +76,9 @@ public class Fragment_sound extends Fragment implements View.OnClickListener, Co
             case R.id.switchMusic:
                 if (switchToggle.isChecked()) {
                     StartActivity.playExoPlayer(StartActivity.startTrack);
+                    sPref.putString(Constant.SAVED_SWITCH_MUSIC, "On");
                 } else {
+                    sPref.putString(Constant.SAVED_SWITCH_MUSIC, "Off");
                     StartActivity.stopExoPlayer();
                 }
                 break;

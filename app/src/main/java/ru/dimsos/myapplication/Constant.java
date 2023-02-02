@@ -7,7 +7,8 @@ public class Constant {
     final static String SAVED_USER_ID = "saved_user_id";
     final static String SAVED_TRACK = "saved_track";
     final static String SAVED_RADIO = "saved_radioButton";
-
+    final static String SAVED_SWITCH_MUSIC = "saved_switchMusic";
+    final static String SAVED_SWITCH_CLICK = "saved_switchClick";
     public static final String TABLE_NAME = "users";
     public static final String _ID = "_id";
     public static final String USER_NAME = "user_name";

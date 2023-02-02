@@ -18,6 +18,9 @@
     <string name="style_menu">Style</string>
     <string name="level_menu">Level</string>
     <string name="exit_menu">Exit game</string>
+    <string name="explanation_rules1">На каждом новом уровне вам дается рандомный список чисел</string>
+    <string name="explanation_rules2">С помощью которых вы должны сложить заданное число</string>
+    <string name="explanation_rules3">За отведенное количество времени</string>
     <string name="digits">абвгдеёжзийклмнопрстуфхцчшщыьэюяАБВГДЕЁЖЗИКЛМНОПРСТУФХЦЧШЩЫЬЭЮЯ
         abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789</string>
     <string name="password">Password</string>
@@ -54,6 +57,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="soundtracks">Sountracks</string>
+    <string name="help_icon">Help Icon</string>
 
 
 </resources>

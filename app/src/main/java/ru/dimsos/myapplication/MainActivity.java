@@ -174,38 +174,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static void setImageBrainSize() {
         layoutParams = imBrain.getLayoutParams();
         int intLevelMind = Integer.parseInt(tvLevelMind.getText().toString());
-        if (intLevelMind >= 0) {
-            layoutParams.width = 150;
-            layoutParams.height = 150;
+        int layoutParamsSize = 150;
+        for (int i = 0; i < intLevelMind; i++) {
+            layoutParamsSize += 15;
         }
-        if (intLevelMind >= 5) {
-            layoutParams.width = 200;
-            layoutParams.height = 200;
-        }
-        if (intLevelMind >= 10) {
-            layoutParams.width = 400;
-            layoutParams.height = 400;
-        }
-        if (intLevelMind >= 15) {
-            layoutParams.width = 600;
-            layoutParams.height = 600;
-        }
-        if (intLevelMind >= 20) {
-            layoutParams.width = 800;
-            layoutParams.height = 800;
-        }
-        if (intLevelMind >= 25) {
-            layoutParams.width = 1000;
-            layoutParams.height = 1000;
-        }
-        if (intLevelMind >= 30) {
-            layoutParams.width = 1200;
-            layoutParams.height = 1200;
-        }
-        if (intLevelMind >= 35) {
-            layoutParams.width = 1500;
-            layoutParams.height = 1500;
-        }
+
+        layoutParams.height = layoutParamsSize;
+        layoutParams.width = layoutParamsSize;
         imBrain.setLayoutParams(layoutParams);
     }
 
@@ -277,7 +252,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         if (v.getId() == R.id.btnRules) {
             playSoundPoolSnap(soundIdSnap);
-            Toast.makeText(this, "else not realized", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, RulesActivity.class);
+            startActivity(intent);
+//            Toast.makeText(this, "else not realized", Toast.LENGTH_SHORT).show();
         }
         if (v.getId() == R.id.imageButtonClose) { // Закрытие ListFragment
             getFragmentManager().beginTransaction().remove(listFragment).commit();

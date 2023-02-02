@@ -3,17 +3,19 @@ package ru.dimsos.myapplication;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+
+import com.google.android.material.snackbar.Snackbar;
 
 public class Fragment_level extends Fragment implements View.OnClickListener {
 
@@ -21,6 +23,7 @@ public class Fragment_level extends Fragment implements View.OnClickListener {
     static String stateRadioButton;
 
     ImageButton imCloseWindowLevel;
+    ImageView imageViewEasy, imageViewMedium, imageViewHard;
     FragmentTransaction fragmentTransaction;
     RadioGroup radioGroup;
     static RadioButton radioButtonEasy, radioButtonMedium, radioButtonHard;
@@ -30,12 +33,53 @@ public class Fragment_level extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.fragment_level, null);
 
-        sPrefLevelState = new SharedPrefsHelper(getActivity());
-        stateRadioButton = sPrefLevelState.getString(Constant.SAVED_RADIO);
-//        loadRadioStateLevel();
-
         imCloseWindowLevel = view.findViewById(R.id.imCloseWindowLevel);
         imCloseWindowLevel.setOnClickListener(this);
+
+//        Snackbar snackbar = Snackbar.make(imageViewEasy, "Успешный вход пользователя", 1700);
+//        snackbar.setAnchorView(imCloseWindowLevel);
+//        snackbar.setTextColor(getResources().getColor(R.color.letters_gray));
+//        snackbar.setBackgroundTint(getResources().getColor(R.color.frag_color));
+
+        sPrefLevelState = new SharedPrefsHelper(getActivity());
+        stateRadioButton = sPrefLevelState.getString(Constant.SAVED_RADIO);
+
+        imageViewEasy = view.findViewById(R.id.imageViewEasy);
+        imageViewEasy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Snackbar snackbar = Snackbar.make(imCloseWindowLevel,
+                        "Изначально дается 10 секунд и +4 за правильный ответ.", 4000);
+                snackbar.setAnchorView(imCloseWindowLevel);
+                snackbar.setTextColor(getResources().getColor(R.color.black));
+                snackbar.setBackgroundTint(getResources().getColor(R.color.frag_color));
+                snackbar.show();
+            }
+        });
+        imageViewMedium = view.findViewById(R.id.imageViewMedium);
+        imageViewMedium.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Snackbar snackbar = Snackbar.make(imCloseWindowLevel,
+                        "Изначально дается 7 секунд и +3 за правильный ответ.", 4000);
+                snackbar.setAnchorView(imCloseWindowLevel);
+                snackbar.setTextColor(getResources().getColor(R.color.black));
+                snackbar.setBackgroundTint(getResources().getColor(R.color.frag_color));
+                snackbar.show();
+            }
+        });
+        imageViewHard = view.findViewById(R.id.imageViewHard);
+        imageViewHard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Snackbar snackbar = Snackbar.make(imCloseWindowLevel,
+                        "Изначально дается 6 секунд, +3 за верный ответ и вы не имеете право на ошибку.", 4000);
+                snackbar.setAnchorView(imCloseWindowLevel);
+                snackbar.setTextColor(getResources().getColor(R.color.black));
+                snackbar.setBackgroundTint(getResources().getColor(R.color.frag_color));
+                snackbar.show();
+            }
+        });
 
         radioButtonEasy = view.findViewById(R.id.radioButtonEasy);
         radioButtonMedium = view.findViewById(R.id.radioButtonMedium);

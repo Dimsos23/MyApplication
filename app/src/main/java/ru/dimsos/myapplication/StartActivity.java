@@ -71,7 +71,7 @@ public class StartActivity extends AppCompatActivity {
         mediaItem5 = MediaItem.fromUri(track5);
 
         loadTrackPref();
-        playExoPlayer(startTrack);
+        checkSwitchCompactMusic();
 
         showSmartPhrases();
         startMainActivity();
@@ -89,7 +89,10 @@ public class StartActivity extends AppCompatActivity {
         }
     }
 
-
+    void checkSwitchCompactMusic() {
+        String stateMusic = sPref.getString(Constant.SAVED_SWITCH_MUSIC);
+        if (stateMusic.equals("On") || stateMusic.equals("")) playExoPlayer(startTrack);
+    }
 
     private void initHashMapSmartPhrases() {
         phrases = getResources().getStringArray(R.array.phrases);
