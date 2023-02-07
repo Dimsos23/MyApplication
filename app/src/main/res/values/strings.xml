@@ -58,6 +58,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="soundtracks">Sountracks</string>
     <string name="help_icon">Help Icon</string>
+    <string name="button_for_close_single_list_fragment">button_for_close_SingleListFragment</string>
 
 
 </resources>

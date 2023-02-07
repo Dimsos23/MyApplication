@@ -82,19 +82,20 @@
 
     <ImageButton
         android:id="@+id/imageButtonClose"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="124dp"
+        android:layout_height="40dp"
         android:layout_marginTop="12dp"
         android:background="@drawable/round_button"
+        android:contentDescription="@string/button_for_close_single_list_fragment"
         android:minWidth="48dp"
         android:minHeight="48dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@+id/fragContMain"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="@+id/fragContMain"
         app:layout_constraintTop_toBottomOf="@+id/fragContMain"
         app:srcCompat="@drawable/ic_close_window"
-        tools:ignore="SpeakableTextPresentCheck"
-        android:visibility="gone"/>
+        tools:ignore="SpeakableTextPresentCheck" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayoutMain"

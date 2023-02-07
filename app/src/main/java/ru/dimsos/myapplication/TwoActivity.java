@@ -29,7 +29,6 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
     Button btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9;
     TextView tvGuessNumber;
     TextView tvTimer;
-
     public static Integer levelMind = 0;
     int currentInt = 0;
     int min = 1;
@@ -92,7 +91,9 @@ public class TwoActivity extends AppCompatActivity implements View.OnClickListen
     }
 
     public void playSoundPool(int soundID) {
-        soundPool.play(soundID, 1, 1, 0, 0, 1);
+        if (MainActivity.switchClickState) {
+            soundPool.play(soundID, 1, 1, 0, 0, 1);
+        }
     }
 
     @Override

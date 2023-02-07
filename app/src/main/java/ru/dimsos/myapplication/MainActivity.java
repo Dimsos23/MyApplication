@@ -19,7 +19,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -31,12 +30,12 @@ import java.util.Objects;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-
     final String LOG_TAG = "myLogs";
 
     static SoundPool soundPool;
     static int soundIdSnap;
-    static boolean switchSnapState = true;
+    static boolean switchClickState;
+    static boolean switchMusicState;
     SharedPrefsHelper sPref;
     public static DbManager dbManager;
     public static Map<String, String> listUser;
@@ -46,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Fragment_sound fragment_sound;
     Fragment_level fragment_level;
     FragmentTransaction fTrans;
-
     FrameLayout fragContMain;
     static ViewGroup.LayoutParams layoutParams;
 
@@ -54,13 +52,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ObjectAnimator pulseAnimationY;
 
     Button btnPlay, btnRules;
-    ImageButton imageButtonClose;
+    static ImageButton imageButtonClose;
     static ImageView imBrain;
     static TextView tvCurrentAccount;
     static TextView tvLevelMind;
 
     static String currentUserId;
     String savedRadioButtonLevelGame;
+
+    static boolean flagForSwitchMusicListener;
 
 
     @SuppressLint("MissingInflatedId")
@@ -108,13 +108,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dbManager.fillListUsersFromDatabase();
 
         sPref = new SharedPrefsHelper(this);
+        flagForSwitchMusicListener = true;
 
         loadAccountId();
         loadLevelGame();
         setImageBrainSize();
+        checkStateSwitchClick();
+        checkStateSwitchMusic();
         startPulseAnimationImageBrain();
         StartActivity.resumeExoPlayer();
 
+    }
+
+    void checkStateSwitchClick() {
+        switchClickState = sPref.getBoolean(Constant.SAVED_SWITCH_CLICK);
+    }
+
+    void checkStateSwitchMusic() {
+        switchMusicState = sPref.getBoolean(Constant.SAVED_SWITCH_MUSIC);
     }
 
     public void startPulseAnimationImageBrain() {
@@ -135,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public static void playSoundPoolSnap(int soundID) {
-        if (switchSnapState) {
+        if (switchClickState) {
             soundPool.play(soundID, 1, 1, 0, 0, 1);
         }
     }
@@ -165,9 +176,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
+        flagForSwitchMusicListener = true;
         tvLevelMind.setText(dbManager.updateLevelFromDatabase(currentUserId));
         loadAccountId();
         setImageBrainSize();
+        checkStateSwitchClick();
+        checkStateSwitchMusic();
         StartActivity.resumeExoPlayer();
     }
 
@@ -199,7 +213,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         super.onDestroy();
         dbManager.closeDatabase();
-
     }
 
     @Override
@@ -254,9 +267,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             playSoundPoolSnap(soundIdSnap);
             Intent intent = new Intent(this, RulesActivity.class);
             startActivity(intent);
-//            Toast.makeText(this, "else not realized", Toast.LENGTH_SHORT).show();
         }
         if (v.getId() == R.id.imageButtonClose) { // Закрытие ListFragment
+            playSoundPoolSnap(soundIdSnap);
             getFragmentManager().beginTransaction().remove(listFragment).commit();
             imageButtonClose.setVisibility(View.GONE);
         }

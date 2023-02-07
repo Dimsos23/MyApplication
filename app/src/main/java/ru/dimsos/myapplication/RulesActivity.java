@@ -1,7 +1,6 @@
 package ru.dimsos.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -23,13 +22,13 @@ public class RulesActivity extends AppCompatActivity {
     Intent intent;
     SoundPool soundPool;
     int soundIdPressed;
-
     Animation animText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rules);
+        setTitle("");
 
         tvExplainRules1 = findViewById(R.id.tvExplainRules1);
         tvExplainRules1.setVisibility(View.INVISIBLE);
@@ -57,7 +56,9 @@ public class RulesActivity extends AppCompatActivity {
     }
 
     public void playSoundPool(int soundID) {
-        soundPool.play(soundID, 1, 1, 0, 0, 1);
+        if (MainActivity.switchClickState) {
+            soundPool.play(soundID, 1, 1, 0, 0, 1);
+        }
     }
 
     public void startTimer() {

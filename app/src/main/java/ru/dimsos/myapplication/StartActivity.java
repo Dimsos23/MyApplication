@@ -72,7 +72,6 @@ public class StartActivity extends AppCompatActivity {
 
         loadTrackPref();
         checkSwitchCompactMusic();
-
         showSmartPhrases();
         startMainActivity();
     }
@@ -90,8 +89,7 @@ public class StartActivity extends AppCompatActivity {
     }
 
     void checkSwitchCompactMusic() {
-        String stateMusic = sPref.getString(Constant.SAVED_SWITCH_MUSIC);
-        if (stateMusic.equals("On") || stateMusic.equals("")) playExoPlayer(startTrack);
+        if (sPref.getBoolean(Constant.SAVED_SWITCH_MUSIC)) playExoPlayer(startTrack);
     }
 
     private void initHashMapSmartPhrases() {
